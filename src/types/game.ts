@@ -93,6 +93,7 @@ export interface TimetableStep {
 
 export interface RoomState {
   roomCode: string;
+  scenarioId?: string; // 확장형 멀티 시나리오 식별자 (기본값: 'new-frontier')
   playerCount: 6 | 7;
   // 4대 진행/스포일러 관문 해금 여부
   gate0Unlocked: boolean; // 암호: 0301 (3단계 1차 조사 시작 해금 — 자기소개 전 카드 선점 방지)

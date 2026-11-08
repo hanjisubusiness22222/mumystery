@@ -14,6 +14,7 @@ function createInitialRoom(roomCode: string): RoomState {
   }
   return {
     roomCode,
+    scenarioId: 'new-frontier',
     playerCount: 7,
     gate0Unlocked: false,
     gate1Unlocked: false,
