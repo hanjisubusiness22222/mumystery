@@ -107,7 +107,7 @@ export default function TabInventory({
               <Briefcase className="w-3.5 h-3.5 text-amber-400" /> 내 소지품 목록 ({myCards.length}장)
             </span>
             <span className="text-[11px] text-stone-400">
-              밀담 거래 및 데이비드 압수 시 [양도하기] 사용
+              밀담 거래 시 [양도하기] 사용
             </span>
           </div>
 
