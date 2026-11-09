@@ -48,8 +48,8 @@ export const ZONES: ZoneInfo[] = [
   },
   {
     id: 6,
-    name: '외곽 마른 나무 - 빈 무덤',
-    backLabel: '[외곽 마른 나무 - 빈 무덤]',
+    name: '외곽 마른 나무 (사건 현장)',
+    backLabel: '[외곽 마른 나무 (사건 현장)]',
     emoji: '🪦',
     manager: '2차 조사 신규 오픈 구역',
     act: 2,
@@ -110,11 +110,11 @@ export const CLUE_CARDS: ClueCardData[] = [
     zoneName: '[보안관 사무소]',
     act: 1,
     category: 'kill_item',
-    badgeText: '💥 사살·제압 아이템 ① (주사위 +1)',
+    badgeText: '💥 고위력 호신 무기 (주사위 +1)',
     title: '[무기] 대구경 콜트 리볼버',
     description:
       '보안관 집무실 책상 밑 비밀 금고 안쪽에 보관되어 있던 행크 소유의 묵직한 대구경 리볼버 권총이다. 총열이 길고 파괴력이 뛰어나 단 한 발로도 치명상을 입힐 수 있다.',
-    effectNote: '★효과: 사살·제압파(클라이브·애니·베니·데이비드·어니스트)가 소지 시 행크 추격전 주사위 +1',
+    effectNote: '★효과: 후반전 최종 결판 주사위 판정 시 기본 눈금 +1 보너스 획득 (5단계 이후 상세 활성화)',
     diceBonus: 1
   },
   {
@@ -147,11 +147,11 @@ export const CLUE_CARDS: ClueCardData[] = [
     zoneName: '[타운 홀 - 시장 집무실]',
     act: 1,
     category: 'kill_item',
-    badgeText: '💥 사살·제압 아이템 ② (주사위 +1)',
+    badgeText: '💥 고위력 특수 탄약 (주사위 +1)',
     title: '[탄환] 할로우 포인트 특수 탄약',
     description:
       '어니스트 시장이 호신용으로 비밀리에 구비해 둔 고위력 특수 탄환 상자다. 표적에 적중하는 순간 탄두가 팽창하여, 어떤 질긴 생명력을 가진 자라도 단번에 숨통을 끊어놓을 수 있다.',
-    effectNote: '★효과: 사살·제압파(클라이브·애니·베니·데이비드·어니스트)가 소지 시 행크 추격전 주사위 +1',
+    effectNote: '★효과: 후반전 최종 결판 주사위 판정 시 기본 눈금 +1 보너스 획득 (5단계 이후 상세 활성화)',
     diceBonus: 1
   },
   {
@@ -184,11 +184,11 @@ export const CLUE_CARDS: ClueCardData[] = [
     zoneName: '[마을 진료소]',
     act: 1,
     category: 'survival_item',
-    badgeText: '🛡️ 생존 아이템 ① (주사위 +1)',
+    badgeText: '🛡️ 전문 외과 의료 키트 (주사위 +1)',
     title: '[의술] 응급 외과 봉합 키트',
     description:
       '플로렌스 원장이 가장 아끼는 최고급 외과 수술 도구와 지혈제, 강심제가 완비된 의료 키트다. 치명상을 입은 환자라도 현장에서 즉시 응급 처치하여 목숨을 살려낼 수 있다.',
-    effectNote: '★효과: 생존파(플로렌스·그레이스)가 소지 시 행크 추격전 주사위 +1',
+    effectNote: '★효과: 후반전 최종 결판 주사위 판정 시 기본 눈금 +1 보너스 획득 (5단계 이후 상세 활성화)',
     diceBonus: 1
   },
   {
@@ -244,11 +244,11 @@ export const CLUE_CARDS: ClueCardData[] = [
     zoneName: '[마을 성당]',
     act: 1,
     category: 'survival_item',
-    badgeText: '🛡️ 생존 아이템 ② (주사위 +1)',
+    badgeText: '🛡️ 특수 제작 방탄 조끼 (주사위 +1)',
     title: '[방어] 강철 방탄 조끼',
     description:
-      '두꺼운 가죽 옷 안쪽에 강철판을 덧대어 만든 특수 방탄 조끼다. 누군가 급하게 성당에 들러 숨겨둔 것으로 보이며, 이를 입히면 총잡이의 리볼버 총탄으로부터 목숨을 지켜낼 수 있다.',
-    effectNote: '★효과: 생존파(플로렌스·그레이스)가 소지 시 행크 추격전 주사위 +1',
+      '두꺼운 가죽 옷 안쪽에 강철판을 덧대어 만든 특수 방탄 조끼다. 누군가 급하게 성당에 들러 숨겨둔 것으로 보이며, 총잡이의 치명적인 총탄을 막아낼 수 있는 견고한 방어구다.',
+    effectNote: '★효과: 후반전 최종 결판 주사위 판정 시 기본 눈금 +1 보너스 획득 (5단계 이후 상세 활성화)',
     diceBonus: 1
   },
   {
@@ -274,24 +274,24 @@ export const CLUE_CARDS: ClueCardData[] = [
       '"서부 최악의 무법자 조직 \'매드독 갱단\'의 두목 일명 \'매드독\'이 현상금을 독차지하기 위해 부하들을 제 손으로 몰살하고 자취를 감췄다."'
   },
 
-  // 구역 6: 외곽 마른 나무 - 빈 무덤 (2차 조사 오픈)
+  // 구역 6: 외곽 마른 나무 (사건 현장) (2차 조사 오픈)
   {
     id: '6-1',
     zoneId: 6,
-    zoneName: '[외곽 마른 나무 - 빈 무덤]',
+    zoneName: '[외곽 마른 나무 (사건 현장)]',
     act: 2,
     category: 'kill_item',
-    badgeText: '💥 사살·제압 아이템 ③ (주사위 +1)',
+    badgeText: '💥 포박용 가죽 올가미 (주사위 +1)',
     title: '[포박] 올가미 밧줄',
     description:
       '무덤 근처 마른 나뭇가지에 걸려 있던 단단한 황소 가죽 올가미 밧줄이다. 도망치는 표적의 목이나 발목을 낚아채어 단숨에 쓰러뜨리고 제압할 수 있다.',
-    effectNote: '★효과: 사살·제압파(클라이브·애니·베니·데이비드·어니스트)가 소지 시 행크 추격전 주사위 +1',
+    effectNote: '★효과: 후반전 최종 결판 주사위 판정 시 기본 눈금 +1 보너스 획득', 
     diceBonus: 1
   },
   {
     id: '6-2',
     zoneId: 6,
-    zoneName: '[외곽 마른 나무 - 빈 무덤]',
+    zoneName: '[외곽 마른 나무 (사건 현장)]',
     act: 2,
     category: 'clue',
     badgeText: '🔎 사건 단서',
@@ -302,7 +302,7 @@ export const CLUE_CARDS: ClueCardData[] = [
   {
     id: '6-3',
     zoneId: 6,
-    zoneName: '[외곽 마른 나무 - 빈 무덤]',
+    zoneName: '[외곽 마른 나무 (사건 현장)]',
     act: 2,
     category: 'clue',
     badgeText: '🔎 사건 단서',
@@ -318,11 +318,11 @@ export const CLUE_CARDS: ClueCardData[] = [
     zoneName: '[외곽 폐광 - 은신처]',
     act: 2,
     category: 'kill_item',
-    badgeText: '💥 사살·제압 아이템 ④ (주사위 +1)',
+    badgeText: '💥 폐광 갱도 상세 설계도 (주사위 +1)',
     title: '[추적] 폐광 갱도 비밀 지도',
     description:
       '거미줄처럼 얽힌 폐광 지하의 환기구와 비밀 지름길이 상세히 그려진 광산 설계도다. 이 지도가 있으면 은신처에 숨어 저항하는 표적의 등 뒤(사각지대)로 소리 없이 기습할 수 있다.',
-    effectNote: '★효과: 사살·제압파(클라이브·애니·베니·데이비드·어니스트)가 소지 시 행크 추격전 주사위 +1',
+    effectNote: '★효과: 후반전 최종 결판 주사위 판정 시 기본 눈금 +1 보너스 획득', 
     diceBonus: 1
   },
   {
