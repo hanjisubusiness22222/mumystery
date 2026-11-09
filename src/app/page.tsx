@@ -5,6 +5,7 @@ import { CHARACTER_MAP } from '@/data/characters';
 import { CLUE_CARDS } from '@/data/cards';
 import { GATE_PASSWORDS } from '@/data/timetable';
 import { CharacterId, RoomState } from '@/types/game';
+import { supabase } from '@/lib/supabase';
 import LobbyView from '@/components/LobbyView';
 import HeaderBar from '@/components/HeaderBar';
 import TabBooklet from '@/components/TabBooklet';
@@ -134,6 +135,95 @@ export default function HomePage() {
     }
   }, [activeTab, selectedCharId]);
 
+  // Supabase 실시간 동기화 전송 헬퍼
+  const syncToSupabase = useCallback(async (stateToSync: RoomState) => {
+    try {
+      await supabase.from('rooms').upsert({
+        room_code: stateToSync.roomCode,
+        state: stateToSync,
+        updated_at: new Date().toISOString()
+      });
+    } catch {
+      // Supabase 테이블이 아직 없거나 네트워크 단절 시 조용히 무시 (로컬 & API 폴백 자동 작동)
+    }
+  }, []);
+
+  // Supabase Realtime 구독 (카카오톡처럼 0.05초 전원 동기화)
+  useEffect(() => {
+    if (!roomCode) return;
+
+    // 1. 방 진입 시 Supabase 최신 상태 로드
+    const loadSupabase = async () => {
+      try {
+        const { data } = await supabase
+          .from('rooms')
+          .select('state')
+          .eq('room_code', roomCode)
+          .maybeSingle();
+
+        if (data && data.state) {
+          const s = data.state as RoomState;
+          setRoom((prev) => {
+            const merged: RoomState = {
+              ...s,
+              gate0Unlocked: prev.gate0Unlocked || s.gate0Unlocked,
+              gate1Unlocked: prev.gate1Unlocked || s.gate1Unlocked,
+              gate2Unlocked: prev.gate2Unlocked || s.gate2Unlocked,
+              gate3Unlocked: prev.gate3Unlocked || s.gate3Unlocked,
+              cardOwners: { ...prev.cardOwners, ...s.cardOwners },
+              chaseDiceRolls: { ...prev.chaseDiceRolls, ...s.chaseDiceRolls }
+            };
+            try {
+              localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(merged));
+            } catch {}
+            return merged;
+          });
+        }
+      } catch {
+        // ignore
+      }
+    };
+    loadSupabase();
+
+    // 2. 실시간 웹소켓 채널 구독
+    const channel = supabase
+      .channel(`room_${roomCode}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'rooms',
+          filter: `room_code=eq.${roomCode}`
+        },
+        (payload) => {
+          if (payload.new && (payload.new as { state?: RoomState }).state) {
+            const remote = (payload.new as { state: RoomState }).state;
+            setRoom((prev) => {
+              const merged: RoomState = {
+                ...remote,
+                gate0Unlocked: prev.gate0Unlocked || remote.gate0Unlocked,
+                gate1Unlocked: prev.gate1Unlocked || remote.gate1Unlocked,
+                gate2Unlocked: prev.gate2Unlocked || remote.gate2Unlocked,
+                gate3Unlocked: prev.gate3Unlocked || remote.gate3Unlocked,
+                cardOwners: { ...prev.cardOwners, ...remote.cardOwners },
+                chaseDiceRolls: { ...prev.chaseDiceRolls, ...remote.chaseDiceRolls }
+              };
+              try {
+                localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(merged));
+              } catch {}
+              return merged;
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [roomCode]);
+
   // 공통 액션 호출 헬퍼 (낙관적 즉시 업데이트 + 영구 보존)
   const dispatchRoomAction = async (
     action: string,
@@ -164,6 +254,7 @@ export default function HomePage() {
         try {
           localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(next));
         } catch {}
+        syncToSupabase(next);
         return next;
       });
     }
@@ -197,6 +288,7 @@ export default function HomePage() {
           try {
             localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(merged));
           } catch {}
+          syncToSupabase(merged);
           return merged;
         });
         return { ok: true };
