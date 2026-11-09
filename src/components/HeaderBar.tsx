@@ -44,8 +44,15 @@ export default function HeaderBar({
                 </span>
               </div>
               <p className="text-[11px] text-stone-400 truncate">
-                {character.roleTitle} ·{' '}
-                {character.faction === 'kill_subdue' ? '💥 사살·제압파' : '🛡️ 생존파'}
+                {character.roleTitle}
+                {room.gate1Unlocked && (
+                  <>
+                    {' · '}
+                    {character.faction === 'kill_subdue'
+                      ? '💥 사살·제압파'
+                      : '🛡️ 생존파'}
+                  </>
+                )}
               </p>
             </div>
           </div>
