@@ -100,7 +100,7 @@ export const CHARACTERS: CharacterData[] = [
         label: '기본 목표 2',
         points: 5,
         title: '위험으로부터 애니를 지킨다',
-        description: '애니가 무사히 자유의 몸으로 남도록 지켜낸다. (투표에서 애니가 최다 득표를 받을 때 내 특수 능력으로 대신 감옥에 들어가 희생해도 +5점 달성!)',
+        description: '애니가 무사히 자유의 몸으로 남도록 지켜낸다. (투표에서 애니가 최다 득표를 받을 때 내 특수 능력으로 대신 감옥에 들어가 희생하면 +5점 달성!)',
         canBeReplacedByBribe: true
       },
       {
