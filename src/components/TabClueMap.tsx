@@ -53,7 +53,7 @@ export default function TabClueMap({
     const ok = await onUnlockGate(0, gate0Password);
     if (!ok) {
       setUnlock0Error(
-        '암호가 올바르지 않습니다. 진행자에게 3단계(1차 조사) 해금 암호(0301)를 확인하세요.'
+        '암호가 올바르지 않습니다. 진행자에게 3단계 해금 암호를 확인하세요.'
       );
     } else {
       setGate0Password('');
@@ -66,7 +66,7 @@ export default function TabClueMap({
     const ok = await onUnlockGate(1, gate1Password);
     if (!ok) {
       setUnlock1Error(
-        '암호가 올바르지 않습니다. 진행자에게 5단계(2차 조사) 해금 암호(1889)를 확인하세요.'
+        '암호가 올바르지 않습니다. 진행자에게 5단계 해금 암호를 확인하세요.'
       );
     } else {
       setGate1Password('');

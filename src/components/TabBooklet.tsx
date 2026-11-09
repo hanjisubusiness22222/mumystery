@@ -199,7 +199,7 @@ export default function TabBooklet({
                   <div className="flex items-center gap-2 text-xs">
                     <Lock className="w-4 h-4 text-amber-600/70 shrink-0" />
                     <span>
-                      <b>[{goal.label}] (+{goal.points}점)</b> — 5단계 《빈 무덤의 반전》 해금(`1889`) 후 공개됩니다.
+                      <b>[{goal.label}] (+{goal.points}점)</b> — 5단계 새로운 이벤트 발생 후 공개됩니다.
                     </span>
                   </div>
                 </div>
