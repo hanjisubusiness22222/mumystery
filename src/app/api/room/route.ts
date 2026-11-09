@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { CharacterId, RoomState } from '@/types/game';
 import { CLUE_CARDS } from '@/data/cards';
 import { GATE_PASSWORDS } from '@/data/timetable';
 
-const STORE_PATH = path.join(process.cwd(), '.room-store.json');
+// Vercel serverless writable path
+const STORE_PATH = path.join(os.tmpdir(), 'mumystery-room-store.json');
+
+// Memory fallback cache across invocations in same container
+const globalMemoryStore = ((globalThis as unknown as { __roomStore?: Record<string, RoomState> }).__roomStore =
+  (globalThis as unknown as { __roomStore?: Record<string, RoomState> }).__roomStore || {});
 
 function createInitialRoom(roomCode: string): RoomState {
   const cardOwners: Record<string, CharacterId | null> = {};
@@ -35,16 +41,18 @@ function readStore(): Record<string, RoomState> {
   try {
     if (fs.existsSync(STORE_PATH)) {
       const raw = fs.readFileSync(STORE_PATH, 'utf-8');
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      return { ...globalMemoryStore, ...parsed };
     }
   } catch {
     // ignore read error
   }
-  return {};
+  return { ...globalMemoryStore };
 }
 
 function writeStore(store: Record<string, RoomState>) {
   try {
+    Object.assign(globalMemoryStore, store);
     fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), 'utf-8');
   } catch {
     // ignore write error

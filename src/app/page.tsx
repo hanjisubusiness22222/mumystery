@@ -45,16 +45,29 @@ export default function HomePage() {
   );
   const [isCharacterLocked, setIsCharacterLocked] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<ActiveTab>('story');
-  const [room, setRoom] = useState<RoomState>(() =>
-    createInitialLocalRoom('1889')
-  );
+  const [room, setRoom] = useState<RoomState>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem('nf_room_state_1889');
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return createInitialLocalRoom('1889');
+  });
 
-  // 저장된 캐릭터 & 방 코드 복원
+  // 저장된 캐릭터 & 방 코드 & 로컬 방 상태 복원
   useEffect(() => {
     try {
       const savedCode = localStorage.getItem('nf_room_code');
       const savedChar = localStorage.getItem('nf_char_id') as CharacterId | null;
-      if (savedCode) setRoomCode(savedCode);
+      if (savedCode) {
+        setRoomCode(savedCode);
+        const cached = localStorage.getItem(`nf_room_state_${savedCode}`);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          setRoom((prev) => ({ ...prev, ...parsed }));
+        }
+      }
       if (savedChar && CHARACTER_MAP[savedChar]) {
         setSelectedCharId(savedChar);
       }
@@ -63,7 +76,7 @@ export default function HomePage() {
     }
   }, []);
 
-  // 서버에서 방 상태 폴링 (1.5초 주기)
+  // 서버에서 방 상태 폴링 (로컬 해금 상태 보호 병합)
   const fetchRoomState = useCallback(async (code: string) => {
     try {
       const res = await fetch(`/api/room?code=${encodeURIComponent(code)}`, {
@@ -71,7 +84,35 @@ export default function HomePage() {
       });
       if (res.ok) {
         const data: RoomState = await res.json();
-        setRoom(data);
+        setRoom((prev) => {
+          // 로컬에서 이미 열린 관문이나 획득한 카드가 서버의 빈 초기값 때문에 리셋되지 않도록 병합
+          const merged: RoomState = {
+            ...data,
+            gate0Unlocked: prev.gate0Unlocked || data.gate0Unlocked,
+            gate1Unlocked: prev.gate1Unlocked || data.gate1Unlocked,
+            gate2Unlocked: prev.gate2Unlocked || data.gate2Unlocked,
+            gate3Unlocked: prev.gate3Unlocked || data.gate3Unlocked,
+            cardOwners: {
+              ...data.cardOwners,
+              ...Object.fromEntries(
+                Object.entries(prev.cardOwners).filter(([_, owner]) => owner !== null)
+              )
+            },
+            bribedResident: data.bribedResident || prev.bribedResident,
+            cliveSecretPick: data.cliveSecretPick || prev.cliveSecretPick,
+            graceSecretPick: data.graceSecretPick || prev.graceSecretPick,
+            jailedCharacter: data.jailedCharacter || prev.jailedCharacter,
+            cliveEscapeRoll: data.cliveEscapeRoll || prev.cliveEscapeRoll,
+            chaseDiceRolls: {
+              ...prev.chaseDiceRolls,
+              ...data.chaseDiceRolls
+            }
+          };
+          try {
+            localStorage.setItem(`nf_room_state_${code}`, JSON.stringify(merged));
+          } catch {}
+          return merged;
+        });
       }
     } catch {
       // 오프라인/로컬 폴백 유지
@@ -86,11 +127,40 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [roomCode, fetchRoomState]);
 
-  // 공통 액션 호출 헬퍼
+  // 공통 액션 호출 헬퍼 (낙관적 즉시 업데이트 + 영구 보존)
   const dispatchRoomAction = async (
     action: string,
     payload: Record<string, unknown> = {}
   ): Promise<{ ok: boolean; error?: string }> => {
+    // 1. 관문 암호 해금인 경우 로컬에서 즉시 검증 및 낙관적 반영
+    if (action === 'unlock_gate') {
+      const gate = Number(payload.gate);
+      const password = String(payload.password || '').trim();
+      let matched = false;
+      if (gate === 0 && password === GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION) matched = true;
+      if (gate === 1 && password === GATE_PASSWORDS.GATE_1_MID_EVENT) matched = true;
+      if (gate === 2 && password === GATE_PASSWORDS.GATE_2_CLIMAX) matched = true;
+      if (gate === 3 && password === GATE_PASSWORDS.GATE_3_ENDING) matched = true;
+
+      if (!matched) {
+        return { ok: false, error: '암호가 일치하지 않습니다.' };
+      }
+
+      setRoom((prev) => {
+        const next: RoomState = {
+          ...prev,
+          gate0Unlocked: gate === 0 || gate === 1 ? true : prev.gate0Unlocked,
+          gate1Unlocked: gate === 1 ? true : prev.gate1Unlocked,
+          gate2Unlocked: gate === 2 ? true : prev.gate2Unlocked,
+          gate3Unlocked: gate === 3 ? true : prev.gate3Unlocked
+        };
+        try {
+          localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+    }
+
     try {
       const res = await fetch('/api/room', {
         method: 'POST',
@@ -101,15 +171,40 @@ export default function HomePage() {
           ...payload
         })
       });
-      const data = await res.json();
-      if (!res.ok) {
+      if (res.ok) {
+        const data: RoomState = await res.json();
+        setRoom((prev) => {
+          const merged: RoomState = {
+            ...data,
+            gate0Unlocked: prev.gate0Unlocked || data.gate0Unlocked,
+            gate1Unlocked: prev.gate1Unlocked || data.gate1Unlocked,
+            gate2Unlocked: prev.gate2Unlocked || data.gate2Unlocked,
+            gate3Unlocked: prev.gate3Unlocked || data.gate3Unlocked,
+            cardOwners: {
+              ...data.cardOwners,
+              ...Object.fromEntries(
+                Object.entries(prev.cardOwners).filter(([_, owner]) => owner !== null)
+              )
+            }
+          };
+          try {
+            localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(merged));
+          } catch {}
+          return merged;
+        });
+        return { ok: true };
+      } else {
+        const data = await res.json().catch(() => ({}));
+        if (action === 'unlock_gate') {
+          return { ok: true };
+        }
         return { ok: false, error: data.error || '요청 실패' };
       }
-      setRoom(data);
-      return { ok: true };
     } catch {
-      // 서버 연결 불가 시 로컬 상태 즉시 반영 폴백
-      return { ok: false, error: '네트워크 오류' };
+      if (action === 'unlock_gate') {
+        return { ok: true };
+      }
+      return { ok: false, error: '네트워크 연결 상태를 확인해주세요.' };
     }
   };
 
