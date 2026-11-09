@@ -22,6 +22,36 @@ export default function LobbyView({
 }: LobbyViewProps) {
   const [inputCode, setInputCode] = useState(roomCode || '1889');
   const [confirmChar, setConfirmChar] = useState<CharacterData | null>(null);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState('');
+
+  // 캐릭터별 전용 비밀번호 매핑 (3자리: 111 ~ 117)
+  const CHARACTER_PINS: Record<CharacterId, string> = {
+    annie: '111',
+    benny: '112',
+    david: '113',
+    ernest: '114',
+    florence: '115',
+    grace: '116',
+    clive: '117',
+  };
+
+  const handleOpenPinModal = (char: CharacterData) => {
+    setConfirmChar(char);
+    setPinInput('');
+    setPinError('');
+  };
+
+  const handleVerifyAndEnter = () => {
+    if (!confirmChar) return;
+    const correctPin = CHARACTER_PINS[confirmChar.id];
+    if (pinInput.trim() === correctPin) {
+      onSelectCharacter(confirmChar.id);
+      setConfirmChar(null);
+    } else {
+      setPinError('비밀번호가 올바르지 않습니다.');
+    }
+  };
 
   const availableCharacters = CHARACTERS.filter(
     (c) => playerCount === 7 || !c.onlySevenPlayer
@@ -123,7 +153,7 @@ export default function LobbyView({
             {availableCharacters.map((char) => (
               <button
                 key={char.id}
-                onClick={() => setConfirmChar(char)}
+                onClick={() => handleOpenPinModal(char)}
                 className={`w-full text-left p-3.5 rounded-xl bg-gradient-to-r ${char.colorClass} border border-stone-700/80 hover:border-amber-500/80 transition shadow-md flex items-start gap-3`}
               >
                 <div className="text-3xl bg-stone-950/60 w-12 h-12 rounded-xl flex items-center justify-center border border-stone-700/60 shrink-0">
@@ -148,9 +178,9 @@ export default function LobbyView({
         </div>
       </div>
 
-      {/* 캐릭터 입장 전 스포일러 방지 확인 모달 */}
+      {/* 캐릭터 입장 전 전용 비밀번호 입력 및 스포일러 방지 모달 */}
       {confirmChar && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-stone-900 border border-amber-600/70 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-center">
             <div className="w-14 h-14 mx-auto rounded-2xl bg-stone-950 border border-amber-700/60 flex items-center justify-center text-3xl">
               {confirmChar.emoji}
@@ -160,28 +190,56 @@ export default function LobbyView({
                 [{confirmChar.initial}] {confirmChar.name}
               </h3>
               <p className="text-xs text-amber-400 font-medium">
-                {confirmChar.roleTitle} 역할이 맞으신가요?
+                {confirmChar.roleTitle} 비밀 설정집 잠금 해제
               </p>
             </div>
-            <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/60 text-rose-200 text-xs leading-relaxed">
-              <Lock className="w-3.5 h-3.5 inline mr-1 mb-0.5" />
-              입장하면 <b>{confirmChar.name}만의 1인칭 비밀 설정집</b>이 열립니다. 다른 플레이어의 설정집을 열람하면 게임이 망가지므로 반드시 본인 캐릭터만 선택해 주세요!
+
+            <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/60 text-rose-200 text-xs leading-relaxed text-left">
+              <Lock className="w-3.5 h-3.5 inline mr-1 mb-0.5 text-rose-400" />
+              타 플레이어의 비밀 설정집 열람을 방지하기 위해 <b>전용 3자리 비밀번호</b>가 필요합니다. 본인 캐릭터의 비밀번호를 입력해 주세요.
             </div>
-            <div className="flex gap-2 pt-1">
+
+            {/* 비밀번호 입력 폼 */}
+            <div className="space-y-2 pt-1">
+              <input
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={pinInput}
+                onChange={(e) => {
+                  setPinInput(e.target.value);
+                  setPinError('');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleVerifyAndEnter();
+                }}
+                placeholder="비밀번호 3자리 입력 (예: 11X)"
+                className="w-full text-center tracking-widest text-lg font-mono py-2.5 px-3 rounded-xl bg-stone-950 border border-stone-700 focus:border-amber-500 focus:outline-none text-amber-200 placeholder:text-stone-600 placeholder:text-xs placeholder:tracking-normal"
+                autoFocus
+              />
+              {pinError && (
+                <p className="text-xs font-semibold text-rose-400">
+                  ⚠️ {pinError}
+                </p>
+              )}
+            </div>
+
+            <div className="flex gap-2 pt-2">
               <button
-                onClick={() => setConfirmChar(null)}
+                onClick={() => {
+                  setConfirmChar(null);
+                  setPinInput('');
+                  setPinError('');
+                }}
                 className="flex-1 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold"
               >
                 취소
               </button>
               <button
-                onClick={() => {
-                  onSelectCharacter(confirmChar.id);
-                  setConfirmChar(null);
-                }}
+                onClick={handleVerifyAndEnter}
                 className="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 text-xs font-extrabold"
               >
-                내 설정집 열기
+                확인 및 입장
               </button>
             </div>
           </div>
