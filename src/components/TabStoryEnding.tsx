@@ -27,7 +27,7 @@ interface TabStoryEndingProps {
   character: CharacterData;
   room: RoomState;
   calculateCharacterBonus: (charId: CharacterId) => number;
-  onUnlockGate: (gate: 0 | 1 | 2 | 3, password: string) => Promise<boolean>;
+  onUnlockGate: (gate: 0 | 1 | 2 | 3) => Promise<boolean>;
   onSubmitSecretPick: (
     actor: 'clive' | 'grace',
     targetId: CharacterId
@@ -49,12 +49,7 @@ export default function TabStoryEnding({
   onSetChaseDice,
   onResetRoom
 }: TabStoryEndingProps) {
-  const [pwGate1, setPwGate1] = useState('');
-  const [pwGate2, setPwGate2] = useState('');
-  const [pwGate3, setPwGate3] = useState('');
-  const [errGate1, setErrGate1] = useState('');
-  const [errGate2, setErrGate2] = useState('');
-  const [errGate3, setErrGate3] = useState('');
+
 
   const [selectedEndingId, setSelectedEndingId] = useState<
     'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'AB'
@@ -150,40 +145,22 @@ export default function TabStoryEnding({
         </div>
 
         {!room.gate1Unlocked ? (
-          <div className="space-y-2.5">
+          <div className="space-y-3 py-1">
             <p className="text-xs text-stone-300 leading-relaxed">
-              4단계 전반전 대화와 밀담(20분)이 종료된 후, 진행자가 안내하는 <b>관문 1 해금 암호</b>를 입력하면 새로운 사건 대본과 2차 조사 구역이 열립니다.
+              4단계 전반전 대화와 밀담(20분)이 종료된 후, 마스터(진행자)가 5단계를 해금하면 새로운 사건 대본과 2차 조사 구역이 열립니다.
             </p>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setErrGate1('');
-                const ok = await onUnlockGate(1, pwGate1);
-                if (!ok)
-                  setErrGate1(
-                    '암호가 일치하지 않습니다. 진행자에게 5단계 암호를 확인하세요.'
-                  );
-              }}
-              className="flex gap-2"
-            >
-              <div className="relative flex-1">
-                <KeyRound className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-2.5" />
-                <input
-                  type="text"
-                  value={pwGate1}
-                  onChange={(e) => setPwGate1(e.target.value)}
-                  placeholder="관문 1 암호 입력"
-                  className="w-full pl-8 pr-3 py-2 rounded-lg bg-stone-950 border border-stone-700 text-amber-200 text-xs font-mono font-bold"
-                />
-              </div>
+            {character.id === 'gm' ? (
               <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
+                onClick={() => onUnlockGate(1)}
+                className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow-lg transition"
               >
-                해금
+                🔓 [마스터 전용] 5단계 긴급 상황 즉시 해금하기 (전체 플레이어 동기화)
               </button>
-            </form>
-            {errGate1 && <p className="text-[11px] text-rose-400">{errGate1}</p>}
+            ) : (
+              <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">
+                ⏳ 마스터의 5단계 긴급 상황 해금을 기다리고 있습니다...
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
@@ -230,40 +207,22 @@ export default function TabStoryEnding({
         </div>
 
         {!room.gate2Unlocked ? (
-          <div className="space-y-2.5">
+          <div className="space-y-3 py-1">
             <p className="text-xs text-stone-300 leading-relaxed">
-              8단계 최후 변론(7분)이 끝난 직후, 진행자가 안내하는 <b>관문 2 해금 암호</b>를 입력하면 <b>최후의 비밀 지목 단계</b>와 <b>최종 투표 및 결판 단계</b>가 열립니다.
+              8단계 최후 변론(7분)이 끝난 직후, 마스터(진행자)가 결판 단계를 해금하면 <b>최후의 비밀 지목</b>과 <b>최종 투표 및 결판 단계</b>가 열립니다.
             </p>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setErrGate2('');
-                const ok = await onUnlockGate(2, pwGate2);
-                if (!ok)
-                  setErrGate2(
-                    '암호가 일치하지 않습니다. 진행자에게 9단계 암호를 확인하세요.'
-                  );
-              }}
-              className="flex gap-2"
-            >
-              <div className="relative flex-1">
-                <KeyRound className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-2.5" />
-                <input
-                  type="text"
-                  value={pwGate2}
-                  onChange={(e) => setPwGate2(e.target.value)}
-                  placeholder="관문 2 암호 입력"
-                  className="w-full pl-8 pr-3 py-2 rounded-lg bg-stone-950 border border-stone-700 text-amber-200 text-xs font-mono font-bold"
-                />
-              </div>
+            {character.id === 'gm' ? (
               <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
+                onClick={() => onUnlockGate(2)}
+                className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow-lg transition"
               >
-                해금
+                🔓 [마스터 전용] 9~12단계 최종 결판 즉시 해금하기 (전체 플레이어 동기화)
               </button>
-            </form>
-            {errGate2 && <p className="text-[11px] text-rose-400">{errGate2}</p>}
+            ) : (
+              <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">
+                ⏳ 마스터의 최종 결판 단계 해금을 기다리고 있습니다...
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-5">
@@ -403,51 +362,54 @@ export default function TabStoryEnding({
 
               {/* 클라이브 수감 시: 4 이상 탈옥 주사위 판정기 */}
               {room.jailedCharacter === 'clive' && (
-                <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-600/70 space-y-2">
+                <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-600/70 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-amber-200">
                       🎲 클라이브 유치장 탈옥 판정 (주사위 4 이상 탈옥!)
                     </span>
-                    <button
-                      onClick={() => {
-                        const r = Math.floor(Math.random() * 6) + 1;
-                        onRollCliveEscape(r);
-                      }}
-                      className="px-2.5 py-1 rounded bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs"
-                    >
-                      주사위 굴리기
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[11px] text-stone-400 mr-1">
-                      직접 입력:
-                    </span>
-                    {[1, 2, 3, 4, 5, 6].map((n) => (
-                      <button
-                        key={n}
-                        onClick={() => onRollCliveEscape(n)}
-                        className={`w-7 h-7 rounded font-mono text-xs font-bold border ${
-                          room.cliveEscapeRoll === n
-                            ? 'bg-amber-500 border-amber-300 text-stone-950'
-                            : 'bg-stone-900 border-stone-700 text-stone-300'
-                        }`}
-                      >
-                        {n}
-                      </button>
-                    ))}
+                    {room.cliveEscapeRoll === null ? (
+                      character.id === 'clive' || character.id === 'gm' ? (
+                        <button
+                          onClick={() => {
+                            const r = Math.floor(Math.random() * 6) + 1;
+                            onRollCliveEscape(r);
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow animate-pulse"
+                        >
+                          🎲 주사위 굴리기 (1회 한정)
+                        </button>
+                      ) : (
+                        <span className="text-[11px] text-stone-400">
+                          ⏳ 클라이브 굴림 대기 중
+                        </span>
+                      )
+                    ) : (
+                      character.id === 'gm' && (
+                        <button
+                          onClick={() => {
+                            if (confirm('클라이브 탈옥 주사위를 초기화하고 다시 굴리게 하시겠습니까?')) {
+                              onRollCliveEscape(null);
+                            }
+                          }}
+                          className="px-2 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-400 text-[10px]"
+                        >
+                          마스터 재설정
+                        </button>
+                      )
+                    )}
                   </div>
                   {room.cliveEscapeRoll !== null && (
                     <div
-                      className={`text-xs font-bold p-2 rounded ${
+                      className={`text-xs font-bold p-2.5 rounded-lg ${
                         room.cliveEscapeRoll >= 4
                           ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-700'
                           : 'bg-rose-950/80 text-rose-300 border border-rose-700'
                       }`}
                     >
-                      주사위 결과: [{room.cliveEscapeRoll}] ➔{' '}
+                      주사위 결과: [{room.cliveEscapeRoll}] (굴림 완료 · 변경 불가) ➔{' '}
                       {room.cliveEscapeRoll >= 4
-                        ? '💥 탈옥 성공! 클라이브가 유치장을 부수고 행크 추격전에 정상 합류합니다!'
-                        : '⛓️ 탈옥 실패 (1~3)! 클라이브는 추격전에 참여할 수 없습니다.'}
+                        ? '💥 탈옥 성공! 클라이브가 유치장을 부수고 결판에 정상 합류합니다!'
+                        : '⛓️ 탈옥 실패 (1~3)! 클라이브는 결판에 참여할 수 없습니다.'}
                     </div>
                   )}
                 </div>
@@ -524,36 +486,49 @@ export default function TabStoryEnding({
                       </div>
 
                       {!blocked && (
-                        <div className="flex items-center justify-between gap-1.5 pt-1 border-t border-stone-800/80">
-                          <div className="flex items-center gap-1">
-                            {[1, 2, 3, 4, 5, 6].map((n) => (
-                              <button
-                                key={n}
-                                onClick={() =>
-                                  onSetChaseDice(
-                                    c.id,
-                                    diceVal === n ? null : n
-                                  )
-                                }
-                                className={`w-6 h-6 rounded text-xs font-mono font-bold border ${
-                                  diceVal === n
-                                    ? 'bg-amber-500 border-amber-300 text-stone-950'
-                                    : 'bg-stone-950 border-stone-700 text-stone-300'
-                                }`}
-                              >
-                                {n}
-                              </button>
-                            ))}
-                          </div>
-                          <button
-                            onClick={() => {
-                              const rand = Math.floor(Math.random() * 6) + 1;
-                              onSetChaseDice(c.id, rand);
-                            }}
-                            className="px-2.5 py-1 rounded-lg bg-amber-700 hover:bg-amber-600 text-stone-950 font-bold text-[11px]"
-                          >
-                            🎲 굴리기
-                          </button>
+                        <div className="pt-1.5 border-t border-stone-800/80">
+                          {diceVal !== null ? (
+                            <div className="flex items-center justify-between text-xs py-0.5">
+                              <span className="text-emerald-400 font-bold flex items-center gap-1">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> 주사위 눈금: <b>[{diceVal}]</b> (굴림 완료 · 변경 불가)
+                              </span>
+                              {character.id === 'gm' && (
+                                <button
+                                  onClick={() => {
+                                    if (confirm(`${c.name}의 주사위를 초기화하고 다시 굴리게 하시겠습니까?`)) {
+                                      onSetChaseDice(c.id, null);
+                                    }
+                                  }}
+                                  className="px-2 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-400 text-[10px]"
+                                >
+                                  마스터 재설정
+                                </button>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-between py-0.5">
+                              {character.id === c.id || character.id === 'gm' ? (
+                                <>
+                                  <span className="text-[11px] text-stone-400">
+                                    🎲 단 한 번만 굴릴 수 있습니다!
+                                  </span>
+                                  <button
+                                    onClick={() => {
+                                      const rand = Math.floor(Math.random() * 6) + 1;
+                                      onSetChaseDice(c.id, rand);
+                                    }}
+                                    className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow transition animate-pulse"
+                                  >
+                                    🎲 주사위 굴리기 (1회 한정)
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-[11px] text-stone-500">
+                                  ⏳ {c.name.split(' ')[0]} 님의 주사위 굴림을 기다리는 중...
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -588,40 +563,22 @@ export default function TabStoryEnding({
         </div>
 
         {!room.gate3Unlocked ? (
-          <div className="space-y-2.5">
+          <div className="space-y-3 py-1">
             <p className="text-xs text-stone-300 leading-relaxed">
-              최종 결판이 모두 끝난 뒤, 진행자가 안내하는 <b>관문 3 해금 암호</b>를 입력하면 <b>비밀 지목 채점 결과, 캐릭터별 최종 결말(Ending A~G), 사건의 전말 해설서</b>가 공개됩니다.
+              최종 결판이 모두 끝난 뒤, 마스터(진행자)가 결말을 해금하면 <b>비밀 지목 채점 결과, 캐릭터별 최종 결말(Ending A~G), 사건의 전말 해설서</b>가 공개됩니다.
             </p>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setErrGate3('');
-                const ok = await onUnlockGate(3, pwGate3);
-                if (!ok)
-                  setErrGate3(
-                    '암호가 일치하지 않습니다. 진행자에게 13단계 암호를 확인하세요.'
-                  );
-              }}
-              className="flex gap-2"
-            >
-              <div className="relative flex-1">
-                <KeyRound className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-2.5" />
-                <input
-                  type="text"
-                  value={pwGate3}
-                  onChange={(e) => setPwGate3(e.target.value)}
-                  placeholder="관문 3 암호 입력"
-                  className="w-full pl-8 pr-3 py-2 rounded-lg bg-stone-950 border border-stone-700 text-amber-200 text-xs font-mono font-bold"
-                />
-              </div>
+            {character.id === 'gm' ? (
               <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
+                onClick={() => onUnlockGate(3)}
+                className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow-lg transition"
               >
-                해금
+                🔓 [마스터 전용] 13단계 최종 결말 및 진상 해설 해금하기 (전체 플레이어 동기화)
               </button>
-            </form>
-            {errGate3 && <p className="text-[11px] text-rose-400">{errGate3}</p>}
+            ) : (
+              <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">
+                ⏳ 마스터의 최종 결말 해금을 기다리고 있습니다...
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-5">

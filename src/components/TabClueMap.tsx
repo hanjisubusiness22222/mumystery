@@ -10,7 +10,7 @@ interface TabClueMapProps {
   character: CharacterData;
   room: RoomState;
   onAcquireCard: (cardId: string) => void;
-  onUnlockGate: (gate: 0 | 1 | 2 | 3, password: string) => Promise<boolean>;
+  onUnlockGate: (gate: 0 | 1 | 2 | 3) => Promise<boolean>;
   onSwitchToInventory: () => void;
 }
 
@@ -22,10 +22,6 @@ export default function TabClueMap({
   onSwitchToInventory
 }: TabClueMapProps) {
   const [selectedZoneId, setSelectedZoneId] = useState<number>(1);
-  const [gate0Password, setGate0Password] = useState('');
-  const [gate1Password, setGate1Password] = useState('');
-  const [unlock0Error, setUnlock0Error] = useState('');
-  const [unlock1Error, setUnlock1Error] = useState('');
   const [justAcquiredCardId, setJustAcquiredCardId] = useState<string | null>(
     null
   );
@@ -46,33 +42,6 @@ export default function TabClueMap({
   const remainingAllCards = CLUE_CARDS.filter(
     (c) => (c.act === 1 || room.gate1Unlocked) && !room.cardOwners[c.id]
   ).length;
-
-  const handleUnlockGate0 = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setUnlock0Error('');
-    const ok = await onUnlockGate(0, gate0Password);
-    if (!ok) {
-      setUnlock0Error(
-        '암호가 올바르지 않습니다. 진행자에게 3단계 해금 암호를 확인하세요.'
-      );
-    } else {
-      setGate0Password('');
-    }
-  };
-
-  const handleUnlockGate1 = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setUnlock1Error('');
-    const ok = await onUnlockGate(1, gate1Password);
-    if (!ok) {
-      setUnlock1Error(
-        '암호가 올바르지 않습니다. 진행자에게 5단계 해금 암호를 확인하세요.'
-      );
-    } else {
-      setGate1Password('');
-      setSelectedZoneId(6);
-    }
-  };
 
   return (
     <div className="space-y-4 pb-8">
@@ -140,31 +109,24 @@ export default function TabClueMap({
               [🔒 관문 0 잠김] 3단계: 1차 조사 시작 대기 중
             </h3>
             <p className="text-xs text-stone-300 leading-relaxed">
-              1단계(설정집 정독)와 2단계(자기소개 및 1차 발언)가 모두 끝나기 전에는 단서 카드를 미리 뽑을 수 없습니다.
+              1단계(설정집 정독)와 2단계(자기소개 및 1차 발언)가 진행 중입니다.
               <br />
-              자기소개가 끝난 후 진행자가 알려주는 <b>1차 조사 해금 암호</b>를 입력하세요!
+              자기소개가 끝나면 <b>게임 진행자(마스터)</b>가 1차 조사를 해금합니다.
             </p>
           </div>
-          <form onSubmit={handleUnlockGate0} className="flex gap-2 pt-1 max-w-xs mx-auto">
-            <div className="relative flex-1">
-              <KeyRound className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-2.5" />
-              <input
-                type="text"
-                value={gate0Password}
-                onChange={(e) => setGate0Password(e.target.value)}
-                placeholder="1차 조사 암호 입력"
-                className="w-full pl-8 pr-3 py-2 rounded-lg bg-stone-950 border border-stone-700 text-amber-200 text-xs font-mono font-bold focus:outline-none focus:border-amber-500"
-              />
+          {character.id === 'gm' ? (
+            <div className="pt-2 max-w-xs mx-auto">
+              <button
+                onClick={() => onUnlockGate(0)}
+                className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow-lg transition"
+              >
+                🔓 [마스터 전용] 1차 조사 즉시 해금하기 (전체 동기화)
+              </button>
             </div>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
-            >
-              해금
-            </button>
-          </form>
-          {unlock0Error && (
-            <p className="text-[11px] text-rose-400 font-medium">{unlock0Error}</p>
+          ) : (
+            <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-xs text-amber-400 font-semibold animate-pulse max-w-xs mx-auto">
+              ⏳ 마스터의 1차 조사 시작 신호를 기다리고 있습니다...
+            </div>
           )}
         </div>
       ) : (
@@ -335,33 +297,25 @@ export default function TabClueMap({
 
           {/* 2차 조사 구역(빈 무덤 & 외곽 폐광) 비밀번호 해금 박스 */}
           {!room.gate1Unlocked && (
-            <div className="p-4 rounded-2xl bg-amber-950/25 border border-amber-700/60 space-y-2.5">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
-                <Lock className="w-4 h-4" /> [🔒 관문 1 잠김] 5단계: 긴급 상황 발생 (새로운 국면) & 2차 조사 구역
+            <div className="p-4 rounded-2xl bg-amber-950/25 border border-amber-700/60 space-y-2.5 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-300">
+                <Lock className="w-4 h-4" /> [🔒 관문 1 잠김] 5단계: 긴급 상황 발생 & 2차 조사 구역
               </div>
               <p className="text-[11px] text-stone-300 leading-relaxed">
-                1차 조사와 전반전 대화(20분)가 모두 끝난 뒤, 진행자가 알려주는 <b>5단계 해금 암호</b>를 입력하면 신규 조사 구역 2곳(총 7장)이 새롭게 열립니다.
+                4단계 전반전 대화와 밀담(20분)이 종료된 후, 마스터가 5단계 긴급 상황을 해금하면 신규 조사 구역 2곳(총 7장)이 새롭게 열립니다.
               </p>
-              <form onSubmit={handleUnlockGate1} className="flex gap-2 pt-1">
-                <div className="relative flex-1">
-                  <KeyRound className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    value={gate1Password}
-                    onChange={(e) => setGate1Password(e.target.value)}
-                    placeholder="5단계 해금 암호 입력"
-                    className="w-full pl-8 pr-3 py-2 rounded-lg bg-stone-950 border border-stone-700 text-amber-200 text-xs font-mono font-bold focus:outline-none focus:border-amber-500"
-                  />
+              {character.id === 'gm' && (
+                <div className="pt-1 max-w-xs mx-auto">
+                  <button
+                    onClick={() => {
+                      onUnlockGate(1);
+                      setSelectedZoneId(6);
+                    }}
+                    className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow transition"
+                  >
+                    🔓 [마스터 전용] 5단계 긴급 상황 즉시 해금하기
+                  </button>
                 </div>
-                <button
-                  type="submit"
-                  className="px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
-                >
-                  해금
-                </button>
-              </form>
-              {unlock1Error && (
-                <p className="text-[11px] text-rose-400 font-medium">{unlock1Error}</p>
               )}
             </div>
           )}

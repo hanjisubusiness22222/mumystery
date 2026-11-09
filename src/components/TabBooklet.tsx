@@ -19,7 +19,7 @@ interface TabBookletProps {
   character: CharacterData;
   room: RoomState;
   onSetBribe: (residentId: CharacterId | null) => void;
-  onUnlockGate?: (gate: 0 | 1 | 2 | 3, password: string) => Promise<boolean>;
+  onUnlockGate?: (gate: 0 | 1 | 2 | 3) => Promise<boolean>;
 }
 
 export default function TabBooklet({
@@ -76,18 +76,18 @@ export default function TabBooklet({
             </span>
           </div>
           <p className="text-xs text-stone-300 leading-relaxed">
-            마스터가 아래 버튼을 누르면 <b>모든 플레이어의 기기에서 해당 단계가 즉시 자동 해금</b>되어 실시간 동기화됩니다. (오프라인 수동 입력을 원할 경우 우측 암호를 구두로 전달해도 됩니다)
+            마스터가 아래 버튼을 누르면 <b>모든 플레이어의 기기에서 해당 단계가 즉시 자동 해금</b>되어 실시간 동기화됩니다.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
                 <div className="font-bold text-stone-200">관문 0 (3단계 1차 조사)</div>
-                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}</div>
+                <div className="text-[11px] text-stone-400">1차 조사 카드 5개 구역 오픈</div>
               </div>
               {onUnlockGate && (
                 <button
-                  onClick={() => onUnlockGate(0, GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION)}
+                  onClick={() => onUnlockGate(0)}
                   disabled={room.gate0Unlocked}
                   className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
                     room.gate0Unlocked
@@ -102,12 +102,12 @@ export default function TabBooklet({
 
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-200">관문 1 (5단계 긴급 상황 & 2차 조사)</div>
-                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_1_MID_EVENT}</div>
+                <div className="font-bold text-stone-200">관문 1 (5단계 긴급 상황)</div>
+                <div className="text-[11px] text-stone-400">사건 대본 및 6·7구역 오픈</div>
               </div>
               {onUnlockGate && (
                 <button
-                  onClick={() => onUnlockGate(1, GATE_PASSWORDS.GATE_1_MID_EVENT)}
+                  onClick={() => onUnlockGate(1)}
                   disabled={room.gate1Unlocked}
                   className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
                     room.gate1Unlocked
@@ -122,12 +122,12 @@ export default function TabBooklet({
 
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-200">관문 2 (9~12단계 최후 결판)</div>
-                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_2_CLIMAX}</div>
+                <div className="font-bold text-stone-200">관문 2 (9~12단계 결판)</div>
+                <div className="text-[11px] text-stone-400">비밀 지목 및 최종 결판 오픈</div>
               </div>
               {onUnlockGate && (
                 <button
-                  onClick={() => onUnlockGate(2, GATE_PASSWORDS.GATE_2_CLIMAX)}
+                  onClick={() => onUnlockGate(2)}
                   disabled={room.gate2Unlocked}
                   className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
                     room.gate2Unlocked
@@ -142,12 +142,12 @@ export default function TabBooklet({
 
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-200">관문 3 (13단계 최종 결말 & 해설)</div>
-                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_3_ENDING}</div>
+                <div className="font-bold text-stone-200">관문 3 (13단계 최종 결말)</div>
+                <div className="text-[11px] text-stone-400">캐릭터별 엔딩 & 해설 오픈</div>
               </div>
               {onUnlockGate && (
                 <button
-                  onClick={() => onUnlockGate(3, GATE_PASSWORDS.GATE_3_ENDING)}
+                  onClick={() => onUnlockGate(3)}
                   disabled={room.gate3Unlocked}
                   className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
                     room.gate3Unlocked

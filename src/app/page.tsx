@@ -229,20 +229,9 @@ export default function HomePage() {
     action: string,
     payload: Record<string, unknown> = {}
   ): Promise<{ ok: boolean; error?: string }> => {
-    // 1. 관문 암호 해금인 경우 로컬에서 즉시 검증 및 낙관적 반영
+    // 1. 관문 해금인 경우 로컬 및 Supabase에 즉시 반영
     if (action === 'unlock_gate') {
       const gate = Number(payload.gate);
-      const password = String(payload.password || '').trim();
-      let matched = false;
-      if (gate === 0 && password === GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION) matched = true;
-      if (gate === 1 && password === GATE_PASSWORDS.GATE_1_MID_EVENT) matched = true;
-      if (gate === 2 && password === GATE_PASSWORDS.GATE_2_CLIMAX) matched = true;
-      if (gate === 3 && password === GATE_PASSWORDS.GATE_3_ENDING) matched = true;
-
-      if (!matched) {
-        return { ok: false, error: '암호가 일치하지 않습니다.' };
-      }
-
       setRoom((prev) => {
         const next: RoomState = {
           ...prev,
@@ -257,6 +246,7 @@ export default function HomePage() {
         syncToSupabase(next);
         return next;
       });
+      return { ok: true };
     }
 
     // 2. 방 초기화인 경우 로컬스토리지 삭제 및 초기 상태로 즉시 리셋
@@ -384,33 +374,10 @@ export default function HomePage() {
   };
 
   const handleUnlockGate = async (
-    gate: 0 | 1 | 2 | 3,
-    password: string
+    gate: 0 | 1 | 2 | 3
   ): Promise<boolean> => {
-    const trimmed = password.trim();
-    const result = await dispatchRoomAction('unlock_gate', {
-      gate,
-      password: trimmed
-    });
-    if (result.ok) return true;
-
-    // 로컬 폴백 검증
-    if (
-      (gate === 0 && trimmed === GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION) ||
-      (gate === 1 && trimmed === GATE_PASSWORDS.GATE_1_MID_EVENT) ||
-      (gate === 2 && trimmed === GATE_PASSWORDS.GATE_2_CLIMAX) ||
-      (gate === 3 && trimmed === GATE_PASSWORDS.GATE_3_ENDING)
-    ) {
-      setRoom((prev) => ({
-        ...prev,
-        gate0Unlocked: gate === 0 || gate === 1 ? true : prev.gate0Unlocked,
-        gate1Unlocked: gate === 1 ? true : prev.gate1Unlocked,
-        gate2Unlocked: gate === 2 ? true : prev.gate2Unlocked,
-        gate3Unlocked: gate === 3 ? true : prev.gate3Unlocked
-      }));
-      return true;
-    }
-    return false;
+    const result = await dispatchRoomAction('unlock_gate', { gate });
+    return result.ok;
   };
 
   if (!selectedCharId) {

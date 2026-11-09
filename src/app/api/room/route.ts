@@ -94,21 +94,15 @@ export async function POST(req: NextRequest) {
 
       case 'unlock_gate': {
         const gate = Number(body.gate);
-        const password = String(body.password || '').trim();
-        if (gate === 0 && password === GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION) {
+        if (gate === 0) {
           room.gate0Unlocked = true;
-        } else if (gate === 1 && password === GATE_PASSWORDS.GATE_1_MID_EVENT) {
+        } else if (gate === 1) {
           room.gate0Unlocked = true;
           room.gate1Unlocked = true;
-        } else if (gate === 2 && password === GATE_PASSWORDS.GATE_2_CLIMAX) {
+        } else if (gate === 2) {
           room.gate2Unlocked = true;
-        } else if (gate === 3 && password === GATE_PASSWORDS.GATE_3_ENDING) {
+        } else if (gate === 3) {
           room.gate3Unlocked = true;
-        } else {
-          return NextResponse.json(
-            { error: '비밀번호가 일치하지 않습니다. 진행자에게 해금 암호를 확인하세요.' },
-            { status: 400 }
-          );
         }
         break;
       }
