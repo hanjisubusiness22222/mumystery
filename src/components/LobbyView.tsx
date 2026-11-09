@@ -188,7 +188,7 @@ export default function LobbyView({
 
             <div className="p-3 rounded-lg bg-rose-950/40 border border-rose-800/60 text-rose-200 text-xs leading-relaxed text-left">
               <Lock className="w-3.5 h-3.5 inline mr-1 mb-0.5 text-rose-400" />
-              타 플레이어의 비밀 설정집 열람을 방지하기 위해 <b>전용 3자리 비밀번호</b>가 필요합니다. 본인 캐릭터의 비밀번호를 입력해 주세요.
+              타 플레이어의 비밀 설정집 열람을 방지하기 위해 비밀번호가 필요합니다. 본인 캐릭터의 비밀번호를 입력해 주세요.
             </div>
 
             {/* 비밀번호 입력 폼 */}
@@ -205,7 +205,7 @@ export default function LobbyView({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleVerifyAndEnter();
                 }}
-                placeholder="비밀번호 3자리 입력 (예: 11X)"
+                placeholder="비밀번호 입력"
                 className="w-full text-center tracking-widest text-lg font-mono py-2.5 px-3 rounded-xl bg-stone-950 border border-stone-700 focus:border-amber-500 focus:outline-none text-amber-200 placeholder:text-stone-600 placeholder:text-xs placeholder:tracking-normal"
                 autoFocus
               />
