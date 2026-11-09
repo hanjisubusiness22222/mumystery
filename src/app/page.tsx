@@ -248,6 +248,23 @@ export default function HomePage() {
       return { ok: true };
     }
 
+    // 카드 획득인 경우 즉시 로컬 반영 및 Supabase 동기화 (초고속 실시간 반응)
+    if (action === 'acquire_card') {
+      const cardId = String(payload.cardId);
+      const characterId = payload.characterId as CharacterId;
+      setRoom((prev) => {
+        const next: RoomState = {
+          ...prev,
+          cardOwners: { ...prev.cardOwners, [cardId]: characterId }
+        };
+        try {
+          localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(next));
+        } catch {}
+        syncToSupabase(next);
+        return next;
+      });
+    }
+
     // 2. 방 초기화인 경우 로컬스토리지 삭제 및 초기 상태로 즉시 리셋
     if (action === 'reset_room') {
       const initial = createInitialLocalRoom(roomCode);
@@ -426,10 +443,10 @@ export default function HomePage() {
           <TabClueMap
             character={currentCharacter}
             room={room}
-            onAcquireCard={(cardId) =>
+            onAcquireCard={(cardId, targetCharId) =>
               dispatchRoomAction('acquire_card', {
                 cardId,
-                characterId: currentCharacter.id
+                characterId: targetCharId || currentCharacter.id
               })
             }
             onUnlockGate={handleUnlockGate}
