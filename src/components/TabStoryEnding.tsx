@@ -308,7 +308,7 @@ export default function TabStoryEnding({
                     🔫 [클라이브 전용] 행크의 조력자(+2점 목표) 비밀 지목
                   </div>
                   <p className="text-[11px] text-stone-300">
-                    마을 주민 중 행크를 돕고 있는 조력자(치료자 또는 혈육 등)로 의심되는 1명을 선택하세요. 적중 시 클라이브 +2점 획득 & 해당 조력자의 은폐 점수(+2점)를 0점으로 삭감합니다!
+                    마을 주민 중 행크를 돕고 있는 조력자로 의심되는 1명을 선택하세요. 적중 시 클라이브 +2점 획득 & 해당 조력자의 은폐 점수(+2점)를 0점으로 삭감합니다!
                   </p>
                   <div className="grid grid-cols-2 gap-1.5 pt-1">
                     {activeChars
