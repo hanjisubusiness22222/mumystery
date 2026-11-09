@@ -549,7 +549,7 @@ export default function TabStoryEnding({
             ) : (
               <Lock className="w-4 h-4 text-amber-400" />
             )}
-            13단계. 캐릭터별 결말 (Ending A~G) & 진상 해설서
+            13단계. 결말 & 진상 해설서
           </h2>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
@@ -565,7 +565,7 @@ export default function TabStoryEnding({
         {!room.gate3Unlocked ? (
           <div className="space-y-3 py-1">
             <p className="text-xs text-stone-300 leading-relaxed">
-              최종 결판이 모두 끝난 뒤, 마스터(진행자)가 결말을 해금하면 <b>비밀 지목 채점 결과, 캐릭터별 최종 결말(Ending A~G), 사건의 전말 해설서</b>가 공개됩니다.
+              최종 결판이 모두 끝난 뒤, 마스터(진행자)가 결말을 해금하면 <b>비밀 지목 채점 결과, 최종 결말, 사건의 전말 해설서</b>가 공개됩니다.
             </p>
             {character.id === 'gm' ? (
               <button
