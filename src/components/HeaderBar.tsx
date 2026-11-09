@@ -69,13 +69,16 @@ export default function HeaderBar({
               </div>
             )}
 
-            <button
-              onClick={() => setShowGuideModal(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-stone-800 hover:bg-stone-700 border border-stone-600 text-stone-200 text-xs font-medium transition"
-            >
-              <Compass className="w-3.5 h-3.5 text-amber-400" />
-              <span>진행표</span>
-            </button>
+            {/* 진행표 버튼: 오직 진행자(GM)에게만 노출 (일반 플레이어 화면에서는 완전 비노출) */}
+            {character.id === 'gm' && (
+              <button
+                onClick={() => setShowGuideModal(true)}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-950/80 hover:bg-amber-900 border border-amber-600/70 text-amber-200 text-xs font-bold transition shadow"
+              >
+                <Compass className="w-3.5 h-3.5 text-amber-400" />
+                <span>진행표</span>
+              </button>
+            )}
 
             <button
               onClick={onToggleCharacterLock}
