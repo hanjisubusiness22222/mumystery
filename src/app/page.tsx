@@ -259,6 +259,18 @@ export default function HomePage() {
       });
     }
 
+    // 2. 방 초기화인 경우 로컬스토리지 삭제 및 초기 상태로 즉시 리셋
+    if (action === 'reset_room') {
+      const initial = createInitialLocalRoom(roomCode);
+      setRoom(initial);
+      try {
+        localStorage.removeItem(`nf_room_state_${roomCode}`);
+        localStorage.removeItem('nf_char_id');
+      } catch {}
+      setSelectedCharId(null);
+      syncToSupabase(initial);
+    }
+
     try {
       const res = await fetch('/api/room', {
         method: 'POST',
@@ -270,6 +282,9 @@ export default function HomePage() {
         })
       });
       if (res.ok) {
+        if (action === 'reset_room') {
+          return { ok: true };
+        }
         const data: RoomState = await res.json();
         setRoom((prev) => {
           const merged: RoomState = {
@@ -487,6 +502,7 @@ export default function HomePage() {
             onSetChaseDice={(characterId, value) =>
               dispatchRoomAction('set_chase_dice', { characterId, value })
             }
+            onResetRoom={() => dispatchRoomAction('reset_room')}
           />
         )}
       </main>

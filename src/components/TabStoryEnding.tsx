@@ -35,6 +35,7 @@ interface TabStoryEndingProps {
   onSetJailed: (charId: CharacterId | null) => void;
   onRollCliveEscape: (val: number | null) => void;
   onSetChaseDice: (charId: CharacterId, val: number | null) => void;
+  onResetRoom?: () => void;
 }
 
 export default function TabStoryEnding({
@@ -45,7 +46,8 @@ export default function TabStoryEnding({
   onSubmitSecretPick,
   onSetJailed,
   onRollCliveEscape,
-  onSetChaseDice
+  onSetChaseDice,
+  onResetRoom
 }: TabStoryEndingProps) {
   const [pwGate1, setPwGate1] = useState('');
   const [pwGate2, setPwGate2] = useState('');
@@ -806,6 +808,29 @@ export default function TabStoryEnding({
                       </ul>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* 새 게임을 위한 방 전체 초기화 버튼 */}
+              {onResetRoom && (
+                <div className="pt-4 border-t border-stone-800/80 text-center">
+                  <button
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          '정말로 현재 방의 모든 해금 상태와 카드 소유권을 초기화하고 새 게임을 시작하시겠습니까?'
+                        )
+                      ) {
+                        onResetRoom();
+                      }
+                    }}
+                    className="w-full py-3 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800/70 text-rose-200 text-xs font-bold transition shadow"
+                  >
+                    🔄 게임 종료: 새 게임을 위해 방 전체 초기화하기
+                  </button>
+                  <p className="text-[11px] text-stone-500 mt-1.5">
+                    초기화 시 모든 단서 및 해금 상태가 리셋되며 메인 로비로 이동합니다.
+                  </p>
                 </div>
               )}
             </div>
