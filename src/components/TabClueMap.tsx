@@ -160,7 +160,7 @@ export default function TabClueMap({
               type="submit"
               className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
             >
-              조사 시작
+              해금
             </button>
           </form>
           {unlock0Error && (
@@ -357,7 +357,7 @@ export default function TabClueMap({
                   type="submit"
                   className="px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
                 >
-                  2차 구역 해금
+                  해금
                 </button>
               </form>
               {unlock1Error && (
