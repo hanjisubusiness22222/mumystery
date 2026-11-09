@@ -58,17 +58,17 @@ export default function TabInventory({
 
   return (
     <div className="space-y-4 pb-8">
-      {/* 상단 내 추격전 보너스 요약 박스 (중반 반전 해금 후에만 표시) */}
+      {/* 상단 내 결판 보너스 요약 박스 (중반 반전 해금 후에만 표시) */}
       {room.gate1Unlocked && (
         <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/50 via-stone-900 to-stone-900 border border-amber-700/60 flex items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
-              <Dices className="w-4 h-4" /> 내 행크 추격전 주사위 보너스
+              <Dices className="w-4 h-4" /> 내 후반전 [최종 결판] 주사위 보너스
             </div>
             <p className="text-[11px] text-stone-300 leading-relaxed">
               {character.faction === 'kill_subdue'
-                ? '사살·제압 아이템(콜트 리볼버·특수 탄약·올가미 밧줄·폐광 지도) 소지 시 개당 +1'
-                : '생존 아이템(응급 외과 봉합 키트·강철 방탄 조끼) 소지 시 개당 +1'}
+                ? '결판 판정 아이템(콜트 리볼버·특수 탄약·올가미 밧줄·폐광 지도) 소지 시 개당 +1'
+                : '결판 판정 아이템(응급 외과 봉합 키트·강철 방탄 조끼) 소지 시 개당 +1'}
               {character.id === 'clive' && ' (클라이브 기본 패시브 +1 포함)'}
             </p>
           </div>

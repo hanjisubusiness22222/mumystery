@@ -260,7 +260,7 @@ export default function TabStoryEnding({
                 type="submit"
                 className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
               >
-                클라이맥스 해금
+                결판 해금
               </button>
             </form>
             {errGate2 && <p className="text-[11px] text-rose-400">{errGate2}</p>}
@@ -308,7 +308,7 @@ export default function TabStoryEnding({
                     🔫 [클라이브 전용] 행크의 조력자(+2점 목표) 비밀 지목
                   </div>
                   <p className="text-[11px] text-stone-300">
-                    마을 주민 중 행크를 돕고 있는 조력자(플로렌스 또는 그레이스)로 의심되는 1명을 선택하세요. 적중 시 클라이브 +2점 획득 & 해당 조력자의 은폐 점수(+2점)를 0점으로 삭감합니다!
+                    마을 주민 중 행크를 돕고 있는 조력자(치료자 또는 혈육 등)로 의심되는 1명을 선택하세요. 적중 시 클라이브 +2점 획득 & 해당 조력자의 은폐 점수(+2점)를 0점으로 삭감합니다!
                   </p>
                   <div className="grid grid-cols-2 gap-1.5 pt-1">
                     {activeChars

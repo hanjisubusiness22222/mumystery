@@ -62,7 +62,7 @@ export default function HeaderBar({
             {room.gate1Unlocked && (
               <div
                 className="flex items-center gap-1 px-2 py-1 rounded-md bg-amber-950/80 border border-amber-600/50 text-amber-200 text-xs font-semibold"
-                title="행크 추격전 내 주사위 보너스 (기본 패시브 + 전용 아이템 개당 +1)"
+                title="후반전 결판 주사위 보너스 (기본 패시브 + 전용 아이템 개당 +1)"
               >
                 <Dices className="w-3.5 h-3.5 text-amber-400" />
                 <span>+{myDiceBonus}</span>
