@@ -127,6 +127,13 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [roomCode, fetchRoomState]);
 
+  // 탭 변경 또는 캐릭터 진입 시 화면 스크롤을 맨 위로 이동
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+  }, [activeTab, selectedCharId]);
+
   // 공통 액션 호출 헬퍼 (낙관적 즉시 업데이트 + 영구 보존)
   const dispatchRoomAction = async (
     action: string,
@@ -238,7 +245,10 @@ export default function HomePage() {
   const handleSelectCharacter = (charId: CharacterId) => {
     setSelectedCharId(charId);
     setIsCharacterLocked(true);
-    setActiveTab('booklet');
+    setActiveTab('story');
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
     try {
       localStorage.setItem('nf_char_id', charId);
     } catch {
