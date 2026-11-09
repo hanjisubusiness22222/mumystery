@@ -205,11 +205,7 @@ export default function HomePage() {
     return (
       <LobbyView
         roomCode={roomCode}
-        playerCount={room.playerCount}
         onChangeRoomCode={handleChangeRoomCode}
-        onChangePlayerCount={(count) =>
-          dispatchRoomAction('set_player_count', { playerCount: count })
-        }
         onSelectCharacter={handleSelectCharacter}
       />
     );

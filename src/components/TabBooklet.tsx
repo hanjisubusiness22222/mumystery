@@ -43,9 +43,7 @@ export default function TabBooklet({
     return checkedGoals[g.id] ? sum + g.points : sum;
   }, 0);
 
-  const residentList = CHARACTERS.filter(
-    (c) => c.id !== 'clive' && (room.playerCount === 7 || !c.onlySevenPlayer)
-  );
+  const residentList = CHARACTERS.filter((c) => c.id !== 'clive');
 
   // 진행자(GM) 전용 마스터 대시보드 화면
   if (character.id === 'gm') {
@@ -57,7 +55,7 @@ export default function TabBooklet({
               🎩 진행자(GM) 전용 마스터 대시보드
             </span>
             <span className="text-xs text-amber-300 font-semibold">
-              방 코드: {room.roomCode} ({room.playerCount}인 모드)
+              방 코드: {room.roomCode}
             </span>
           </div>
           <p className="text-sm font-bold text-amber-100 pt-1">

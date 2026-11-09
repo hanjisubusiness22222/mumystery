@@ -41,10 +41,7 @@ export default function TabInventory({
     (card) => room.cardOwners[card.id] === character.id
   );
 
-  const otherCharacters = CHARACTERS.filter(
-    (c) =>
-      c.id !== character.id && (room.playerCount === 7 || !c.onlySevenPlayer)
-  );
+  const otherCharacters = CHARACTERS.filter((c) => c.id !== character.id);
 
   const getBadgeStyle = (category: ClueCardData['category']) => {
     switch (category) {

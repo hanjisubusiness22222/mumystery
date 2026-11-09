@@ -59,9 +59,7 @@ export default function TabStoryEnding({
   >('C');
   const [showTruthSection, setShowTruthSection] = useState(false);
 
-  const activeChars = CHARACTERS.filter(
-    (c) => room.playerCount === 7 || !c.onlySevenPlayer
-  );
+  const activeChars = CHARACTERS;
 
   // 클라이브가 수감되었으나 4 이상으로 탈옥에 성공했는지 판정
   const isCharacterBlockedFromChase = (charId: CharacterId) => {
@@ -286,21 +284,19 @@ export default function TabStoryEnding({
                       : 'bg-stone-900 border-stone-800 text-stone-400'
                   }`}
                 >
-                  🔫 클라이브(조력자 지목):{' '}
+                  ⭐ 클라이브(조력자 지목):{' '}
                   {room.cliveSecretPick ? '제출 완료 ✓' : '대기 중...'}
                 </span>
-                {room.playerCount === 7 && (
-                  <span
-                    className={`flex-1 p-2 rounded-lg border text-center font-semibold ${
-                      room.graceSecretPick
-                        ? 'bg-emerald-950/50 border-emerald-700 text-emerald-300'
-                        : 'bg-stone-900 border-stone-800 text-stone-400'
-                    }`}
-                  >
-                    ⛪ 그레이스(매드독 지목):{' '}
-                    {room.graceSecretPick ? '제출 완료 ✓' : '대기 중...'}
-                  </span>
-                )}
+                <span
+                  className={`flex-1 p-2 rounded-lg border text-center font-semibold ${
+                    room.graceSecretPick
+                      ? 'bg-emerald-950/50 border-emerald-700 text-emerald-300'
+                      : 'bg-stone-900 border-stone-800 text-stone-400'
+                  }`}
+                >
+                  ⛪ 그레이스(매드독 지목):{' '}
+                  {room.graceSecretPick ? '제출 완료 ✓' : '대기 중...'}
+                </span>
               </div>
 
               {/* 클라이브 본인에게만 보이는 조력자 지목 UI */}
@@ -653,27 +649,25 @@ export default function TabStoryEnding({
                   )}
                 </div>
 
-                {room.playerCount === 7 && (
-                  <div className="p-2 rounded bg-stone-900 border border-stone-800">
-                    • <b>⛪ 그레이스의 [매드독] 지목</b>:{' '}
-                    {gracePickedChar ? (
-                      <>
-                        <b>{gracePickedChar.name}</b> 지목 ➔{' '}
-                        {isGracePickCorrect ? (
-                          <span className="text-emerald-400 font-bold">
-                            적중! (그레이스 +3점 획득!)
-                          </span>
-                        ) : (
-                          <span className="text-rose-400 font-bold">
-                            실패! (진짜 매드독은 클라이브였습니다)
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <span className="text-stone-400">미지목 (0점)</span>
-                    )}
-                  </div>
-                )}
+                <div className="p-2 rounded bg-stone-900 border border-stone-800">
+                  • <b>⛪ 그레이스의 [매드독] 지목</b>:{' '}
+                  {gracePickedChar ? (
+                    <>
+                      <b>{gracePickedChar.name}</b> 지목 ➔{' '}
+                      {isGracePickCorrect ? (
+                        <span className="text-emerald-400 font-bold">
+                          적중! (그레이스 +3점 획득!)
+                        </span>
+                      ) : (
+                        <span className="text-rose-400 font-bold">
+                          실패! (진짜 매드독은 클라이브였습니다)
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <span className="text-stone-400">미지목 (0점)</span>
+                  )}
+                </div>
 
                 <div className="p-2 rounded bg-stone-900 border border-stone-800">
                   • <b>🌟 [피 묻은 연방 보안관 배지] 최종 소유자</b>:{' '}

@@ -7,17 +7,13 @@ import { Shield, Users, Sparkles, Lock } from 'lucide-react';
 
 interface LobbyViewProps {
   roomCode: string;
-  playerCount: 6 | 7;
   onChangeRoomCode: (code: string) => void;
-  onChangePlayerCount: (count: 6 | 7) => void;
   onSelectCharacter: (charId: CharacterId) => void;
 }
 
 export default function LobbyView({
   roomCode,
-  playerCount,
   onChangeRoomCode,
-  onChangePlayerCount,
   onSelectCharacter
 }: LobbyViewProps) {
   const [inputCode, setInputCode] = useState(roomCode || '1889');
@@ -54,9 +50,7 @@ export default function LobbyView({
     }
   };
 
-  const availableCharacters = CHARACTERS.filter(
-    (c) => playerCount === 7 || !c.onlySevenPlayer
-  );
+  const availableCharacters = CHARACTERS;
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col justify-between p-4 pb-10">
@@ -107,34 +101,6 @@ export default function LobbyView({
                   방 적용
                 </button>
               </div>
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-stone-800 flex items-center justify-between">
-            <span className="text-xs text-stone-300 flex items-center gap-1.5 font-medium">
-              <Users className="w-4 h-4 text-amber-400" /> 플레이 인원 설정
-            </span>
-            <div className="flex gap-1.5">
-              <button
-                onClick={() => onChangePlayerCount(6)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition ${
-                  playerCount === 6
-                    ? 'bg-amber-700 border-amber-500 text-white'
-                    : 'bg-stone-950 border-stone-800 text-stone-400'
-                }`}
-              >
-                6인 플레이
-              </button>
-              <button
-                onClick={() => onChangePlayerCount(7)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition ${
-                  playerCount === 7
-                    ? 'bg-amber-700 border-amber-500 text-white'
-                    : 'bg-stone-950 border-stone-800 text-stone-400'
-                }`}
-              >
-                7인 플레이 (추천)
-              </button>
             </div>
           </div>
         </div>

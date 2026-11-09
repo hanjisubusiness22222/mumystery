@@ -40,7 +40,7 @@ export default function HeaderBar({
                   {character.name}
                 </span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-950/90 text-amber-300 border border-amber-700/50 shrink-0">
-                  방 {room.roomCode} ({room.playerCount}인)
+                  방 {room.roomCode}
                 </span>
               </div>
               <p className="text-[11px] text-stone-400 truncate">
