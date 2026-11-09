@@ -13,6 +13,7 @@ interface HeaderBarProps {
   onToggleCharacterLock: () => void;
   onLeaveCharacter: () => void;
   onResetRoom: () => void;
+  onUnlockGate?: (gate: 0 | 1 | 2 | 3, password: string) => Promise<boolean>;
 }
 
 export default function HeaderBar({
@@ -22,7 +23,8 @@ export default function HeaderBar({
   isCharacterLocked,
   onToggleCharacterLock,
   onLeaveCharacter,
-  onResetRoom
+  onResetRoom,
+  onUnlockGate
 }: HeaderBarProps) {
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showHostPasswords, setShowHostPasswords] = useState(false);
@@ -45,7 +47,7 @@ export default function HeaderBar({
               </div>
               <p className="text-[11px] text-stone-400 truncate">
                 {character.roleTitle}
-                {room.gate1Unlocked && (
+                {character.id !== 'gm' && character.faction !== 'neutral' && room.gate1Unlocked && (
                   <>
                     {' · '}
                     {character.faction === 'kill_subdue'
@@ -59,7 +61,7 @@ export default function HeaderBar({
 
           {/* 우측: 추격 보너스 (중반 반전 해금 후에만 표시) & 타임테이블 가이드 */}
           <div className="flex items-center gap-1.5 shrink-0">
-            {room.gate1Unlocked && (
+            {character.id !== 'gm' && room.gate1Unlocked && (
               <div
                 className="flex items-center gap-1 px-2 py-1 rounded-md bg-amber-950/80 border border-amber-600/50 text-amber-200 text-xs font-semibold"
                 title="후반전 결판 주사위 보너스 (기본 패시브 + 전용 아이템 개당 +1)"
@@ -154,29 +156,92 @@ export default function HeaderBar({
 
                   {showHostPasswords && (
                     <div className="mt-2.5 pt-2.5 border-t border-stone-800 space-y-2 text-stone-300">
-                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
-                        <span>🔒 관문 0 (3단계 1차 조사 시작):</span>
-                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
-                          {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}
-                        </code>
+                      <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
+                        <span className="text-xs">🔒 관문 0 (3단계 1차 조사):</span>
+                        <div className="flex items-center gap-1.5">
+                          <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-xs">
+                            {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}
+                          </code>
+                          {onUnlockGate && (
+                            <button
+                              onClick={() => onUnlockGate(0, GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION)}
+                              disabled={room.gate0Unlocked}
+                              className={`px-2 py-1 rounded text-[11px] font-bold transition ${
+                                room.gate0Unlocked
+                                  ? 'bg-emerald-950 text-emerald-400 border border-emerald-600/50'
+                                  : 'bg-amber-600 hover:bg-amber-500 text-stone-950'
+                              }`}
+                            >
+                              {room.gate0Unlocked ? '✓ 해금됨' : '원터치 해금'}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
-                        <span>🔒 관문 1 (5단계 새로운 이벤트 발생):</span>
-                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
-                          {GATE_PASSWORDS.GATE_1_MID_EVENT}
-                        </code>
+
+                      <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
+                        <span className="text-xs">🔒 관문 1 (5단계 긴급 상황):</span>
+                        <div className="flex items-center gap-1.5">
+                          <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-xs">
+                            {GATE_PASSWORDS.GATE_1_MID_EVENT}
+                          </code>
+                          {onUnlockGate && (
+                            <button
+                              onClick={() => onUnlockGate(1, GATE_PASSWORDS.GATE_1_MID_EVENT)}
+                              disabled={room.gate1Unlocked}
+                              className={`px-2 py-1 rounded text-[11px] font-bold transition ${
+                                room.gate1Unlocked
+                                  ? 'bg-emerald-950 text-emerald-400 border border-emerald-600/50'
+                                  : 'bg-amber-600 hover:bg-amber-500 text-stone-950'
+                              }`}
+                            >
+                              {room.gate1Unlocked ? '✓ 해금됨' : '원터치 해금'}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
-                        <span>🔒 관문 2 (9단계 비밀 지목 & 결판):</span>
-                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
-                          {GATE_PASSWORDS.GATE_2_CLIMAX}
-                        </code>
+
+                      <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
+                        <span className="text-xs">🔒 관문 2 (9단계 최후 결판):</span>
+                        <div className="flex items-center gap-1.5">
+                          <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-xs">
+                            {GATE_PASSWORDS.GATE_2_CLIMAX}
+                          </code>
+                          {onUnlockGate && (
+                            <button
+                              onClick={() => onUnlockGate(2, GATE_PASSWORDS.GATE_2_CLIMAX)}
+                              disabled={room.gate2Unlocked}
+                              className={`px-2 py-1 rounded text-[11px] font-bold transition ${
+                                room.gate2Unlocked
+                                  ? 'bg-emerald-950 text-emerald-400 border border-emerald-600/50'
+                                  : 'bg-amber-600 hover:bg-amber-500 text-stone-950'
+                              }`}
+                            >
+                              {room.gate2Unlocked ? '✓ 해금됨' : '원터치 해금'}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
-                        <span>🔒 관문 3 (13단계 엔딩 & 진상 해설):</span>
-                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
-                          {GATE_PASSWORDS.GATE_3_ENDING}
-                        </code>
+
+                      <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
+                        <span className="text-xs">🔒 관문 3 (13단계 최종 결말):</span>
+                        <div className="flex items-center gap-1.5">
+                          <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-xs">
+                            {GATE_PASSWORDS.GATE_3_ENDING}
+                          </code>
+                          {onUnlockGate && (
+                            <button
+                              onClick={() => onUnlockGate(3, GATE_PASSWORDS.GATE_3_ENDING)}
+                              disabled={room.gate3Unlocked}
+                              className={`px-2 py-1 rounded text-[11px] font-bold transition ${
+                                room.gate3Unlocked
+                                  ? 'bg-emerald-950 text-emerald-400 border border-emerald-600/50'
+                                  : 'bg-amber-600 hover:bg-amber-500 text-stone-950'
+                              }`}
+                            >
+                              {room.gate3Unlocked ? '✓ 해금됨' : '원터치 해금'}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}

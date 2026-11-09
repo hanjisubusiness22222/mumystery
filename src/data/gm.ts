@@ -9,7 +9,7 @@ export const GM_CHARACTER: CharacterData = {
   emoji: '🎩',
   colorClass: 'from-amber-950/90 to-stone-900',
   accentBorder: 'border-amber-400',
-  faction: 'survival',
+  faction: 'neutral',
   maxPoints: 0,
   quote: '모든 비밀과 진실을 조율하는 서부극의 마스터입니다.',
   publicIntro: '게임의 흐름과 시간, 4대 관문 해금 암호를 총괄하는 공식 진행자입니다.',

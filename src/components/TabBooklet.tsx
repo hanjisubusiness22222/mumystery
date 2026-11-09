@@ -19,12 +19,14 @@ interface TabBookletProps {
   character: CharacterData;
   room: RoomState;
   onSetBribe: (residentId: CharacterId | null) => void;
+  onUnlockGate?: (gate: 0 | 1 | 2 | 3, password: string) => Promise<boolean>;
 }
 
 export default function TabBooklet({
   character,
   room,
-  onSetBribe
+  onSetBribe,
+  onUnlockGate
 }: TabBookletProps) {
   const [checkedGoals, setCheckedGoals] = useState<Record<string, boolean>>({});
   const [fullscreenSkill, setFullscreenSkill] = useState<CharacterSkill | null>(
@@ -65,33 +67,97 @@ export default function TabBooklet({
 
         {/* 4대 관문 해금 컨트롤러 */}
         <section className="p-4 rounded-xl bg-stone-900/90 border border-amber-600/50 space-y-3">
-          <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5 border-b border-stone-800 pb-2">
-            🔑 4대 관문 해금 암호 (플레이어에게 적절한 순간에 공개)
-          </h2>
+          <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+            <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5">
+              🔑 마스터 원터치 전원 해금 컨트롤러
+            </h2>
+            <span className="text-[11px] text-amber-400 font-semibold">
+              터치 시 전체 플레이어 화면 즉시 자동 해금
+            </span>
+          </div>
+          <p className="text-xs text-stone-300 leading-relaxed">
+            마스터가 아래 버튼을 누르면 <b>모든 플레이어의 기기에서 해당 단계가 즉시 자동 해금</b>되어 실시간 동기화됩니다. (오프라인 수동 입력을 원할 경우 우측 암호를 구두로 전달해도 됩니다)
+          </p>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
-              <div className="text-stone-400">관문 0 (3단계 1차 조사 시작)</div>
-              <div className="text-base font-mono font-extrabold text-amber-400">
-                {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
+              <div className="space-y-0.5">
+                <div className="font-bold text-stone-200">관문 0 (3단계 1차 조사)</div>
+                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}</div>
               </div>
+              {onUnlockGate && (
+                <button
+                  onClick={() => onUnlockGate(0, GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION)}
+                  disabled={room.gate0Unlocked}
+                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
+                    room.gate0Unlocked
+                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-600/50 cursor-default'
+                      : 'bg-amber-600 hover:bg-amber-500 text-stone-950 shadow'
+                  }`}
+                >
+                  {room.gate0Unlocked ? '✓ 전원 해금됨' : '🔓 원터치 해금'}
+                </button>
+              )}
             </div>
-            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
-              <div className="text-stone-400">관문 1 (5단계 새로운 이벤트 발생)</div>
-              <div className="text-base font-mono font-extrabold text-amber-400">
-                {GATE_PASSWORDS.GATE_1_MID_EVENT}
+
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
+              <div className="space-y-0.5">
+                <div className="font-bold text-stone-200">관문 1 (5단계 긴급 상황 & 2차 조사)</div>
+                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_1_MID_EVENT}</div>
               </div>
+              {onUnlockGate && (
+                <button
+                  onClick={() => onUnlockGate(1, GATE_PASSWORDS.GATE_1_MID_EVENT)}
+                  disabled={room.gate1Unlocked}
+                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
+                    room.gate1Unlocked
+                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-600/50 cursor-default'
+                      : 'bg-amber-600 hover:bg-amber-500 text-stone-950 shadow'
+                  }`}
+                >
+                  {room.gate1Unlocked ? '✓ 전원 해금됨' : '🔓 원터치 해금'}
+                </button>
+              )}
             </div>
-            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
-              <div className="text-stone-400">관문 2 (9단계 비밀 지목 & 결판)</div>
-              <div className="text-base font-mono font-extrabold text-amber-400">
-                {GATE_PASSWORDS.GATE_2_CLIMAX}
+
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
+              <div className="space-y-0.5">
+                <div className="font-bold text-stone-200">관문 2 (9~12단계 최후 결판)</div>
+                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_2_CLIMAX}</div>
               </div>
+              {onUnlockGate && (
+                <button
+                  onClick={() => onUnlockGate(2, GATE_PASSWORDS.GATE_2_CLIMAX)}
+                  disabled={room.gate2Unlocked}
+                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
+                    room.gate2Unlocked
+                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-600/50 cursor-default'
+                      : 'bg-amber-600 hover:bg-amber-500 text-stone-950 shadow'
+                  }`}
+                >
+                  {room.gate2Unlocked ? '✓ 전원 해금됨' : '🔓 원터치 해금'}
+                </button>
+              )}
             </div>
-            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
-              <div className="text-stone-400">관문 3 (13단계 엔딩 & 진상 해설)</div>
-              <div className="text-base font-mono font-extrabold text-amber-400">
-                {GATE_PASSWORDS.GATE_3_ENDING}
+
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
+              <div className="space-y-0.5">
+                <div className="font-bold text-stone-200">관문 3 (13단계 최종 결말 & 해설)</div>
+                <div className="text-[11px] text-stone-400 font-mono">암호: {GATE_PASSWORDS.GATE_3_ENDING}</div>
               </div>
+              {onUnlockGate && (
+                <button
+                  onClick={() => onUnlockGate(3, GATE_PASSWORDS.GATE_3_ENDING)}
+                  disabled={room.gate3Unlocked}
+                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition ${
+                    room.gate3Unlocked
+                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-600/50 cursor-default'
+                      : 'bg-amber-600 hover:bg-amber-500 text-stone-950 shadow'
+                  }`}
+                >
+                  {room.gate3Unlocked ? '✓ 전원 해금됨' : '🔓 원터치 해금'}
+                </button>
+              )}
             </div>
           </div>
         </section>

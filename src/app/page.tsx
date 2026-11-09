@@ -440,6 +440,7 @@ export default function HomePage() {
         onToggleCharacterLock={() => setIsCharacterLocked((prev) => !prev)}
         onLeaveCharacter={handleLeaveCharacter}
         onResetRoom={() => dispatchRoomAction('reset_room')}
+        onUnlockGate={handleUnlockGate}
       />
 
       {/* 중앙 탭 콘텐츠 영역 */}
@@ -451,6 +452,7 @@ export default function HomePage() {
             onSetBribe={(residentId) =>
               dispatchRoomAction('set_bribe', { residentId })
             }
+            onUnlockGate={handleUnlockGate}
           />
         )}
 

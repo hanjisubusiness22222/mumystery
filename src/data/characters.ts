@@ -327,7 +327,7 @@ export const CHARACTERS: CharacterData[] = [
     emoji: '💉',
     colorClass: 'from-teal-950/90 to-stone-900',
     accentBorder: 'border-teal-400',
-    faction: 'survival',
+    faction: 'neutral',
     maxPoints: 10,
     quote: '피 냄새와 화약 냄새가 진동하는군요... 다친 곳이 있다면 언제든 제 진료소로 오세요.',
     publicIntro: '황량한 서부 마을의 유일한 의사이자 약사. 언제나 차분하고 친절한 미소를 잃지 않는다.',

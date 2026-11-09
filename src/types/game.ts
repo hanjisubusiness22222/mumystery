@@ -8,7 +8,7 @@ export type CharacterId =
   | 'grace'
   | 'gm';
 
-export type FactionType = 'kill_subdue' | 'survival';
+export type FactionType = 'kill_subdue' | 'survival' | 'neutral';
 
 export interface CharacterGoal {
   id: string;
