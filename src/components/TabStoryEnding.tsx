@@ -376,7 +376,7 @@ export default function TabStoryEnding({
                           }}
                           className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow animate-pulse"
                         >
-                          🎲 주사위 굴리기 (1회 한정)
+                          🎲 주사위 굴리기
                         </button>
                       ) : (
                         <span className="text-[11px] text-stone-400">
@@ -519,7 +519,7 @@ export default function TabStoryEnding({
                                     }}
                                     className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow transition animate-pulse"
                                   >
-                                    🎲 주사위 굴리기 (1회 한정)
+                                    🎲 주사위 굴리기
                                   </button>
                                 </>
                               ) : (
