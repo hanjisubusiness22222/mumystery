@@ -36,7 +36,7 @@ function createInitialLocalRoom(roomCode: string): RoomState {
   };
 }
 
-type ActiveTab = 'booklet' | 'cluemap' | 'inventory' | 'story';
+type ActiveTab = 'story' | 'booklet' | 'cluemap' | 'inventory';
 
 export default function HomePage() {
   const [roomCode, setRoomCode] = useState<string>('1889');
@@ -44,7 +44,7 @@ export default function HomePage() {
     null
   );
   const [isCharacterLocked, setIsCharacterLocked] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<ActiveTab>('booklet');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('story');
   const [room, setRoom] = useState<RoomState>(() =>
     createInitialLocalRoom('1889')
   );
@@ -298,9 +298,21 @@ export default function HomePage() {
         )}
       </main>
 
-      {/* 하단 4대 핵심 탭 네비게이션 */}
+      {/* 하단 4대 핵심 탭 네비게이션: 오프닝·결말 ➔ 내 설정집 ➔ 단서 구역 ➔ 내 소지품 */}
       <nav className="fixed bottom-0 inset-x-0 z-30 bg-stone-950/95 backdrop-blur border-t border-amber-900/50 px-2 py-1.5">
         <div className="max-w-md mx-auto grid grid-cols-4 gap-1">
+          <button
+            onClick={() => setActiveTab('story')}
+            className={`flex flex-col items-center justify-center py-1.5 rounded-xl transition relative ${
+              activeTab === 'story'
+                ? 'bg-amber-950/80 text-amber-300 font-bold border border-amber-700/60'
+                : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            <Film className="w-4 h-4 mb-0.5" />
+            <span className="text-[11px]">오프닝·결말</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('booklet')}
             className={`flex flex-col items-center justify-center py-1.5 rounded-xl transition ${
@@ -340,18 +352,6 @@ export default function HomePage() {
             <span className="text-[11px]">
               내 소지품 {myInventoryCount > 0 ? `(${myInventoryCount})` : ''}
             </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('story')}
-            className={`flex flex-col items-center justify-center py-1.5 rounded-xl transition relative ${
-              activeTab === 'story'
-                ? 'bg-amber-950/80 text-amber-300 font-bold border border-amber-700/60'
-                : 'text-stone-400 hover:text-stone-200'
-            }`}
-          >
-            <Film className="w-4 h-4 mb-0.5" />
-            <span className="text-[11px]">오프닝·결말</span>
           </button>
         </div>
       </nav>

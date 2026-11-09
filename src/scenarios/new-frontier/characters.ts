@@ -184,8 +184,8 @@ export const CHARACTERS: CharacterData[] = [
         id: 'clive-skill-2',
         quote: '"난 뱃지만 찾으면 그만이야"',
         itemName: '[사법거래 회유서]',
-        timing: '[1:1 밀담] 또는 [행동 단계] (게임 중 1회)',
-        priorityBadge: '밀담 / 사법거래',
+        timing: '[1:1 밀담 단계 전용] (게임 중 1회)',
+        priorityBadge: '1:1 밀담 전용',
         description: '마을 주민 1명에게 은밀히 회유서를 건네 자신의 조력자로 포섭(매수)합니다. 회유서를 수락한 주민의 기존 5점 목표(범인으로 지목되지 않는다)는 [클라이브가 행크 사살 시 (+5점)]으로 영구 변경됩니다!'
       }
     ],
