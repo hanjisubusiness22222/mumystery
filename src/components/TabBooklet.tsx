@@ -82,7 +82,7 @@ export default function TabBooklet({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-200">관문 0 (3단계 1차 조사)</div>
+                <div className="font-bold text-stone-200">1차 단서 조사 시작</div>
                 <div className="text-[11px] text-stone-400">1차 조사 카드 5개 구역 오픈</div>
               </div>
               {onUnlockGate && (
@@ -102,7 +102,7 @@ export default function TabBooklet({
 
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-200">관문 1 (5단계 긴급 상황)</div>
+                <div className="font-bold text-stone-200">긴급 상황 발생 (새로운 국면)</div>
                 <div className="text-[11px] text-stone-400">사건 대본 및 6·7구역 오픈</div>
               </div>
               {onUnlockGate && (
@@ -122,7 +122,7 @@ export default function TabBooklet({
 
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-200">관문 2 (9~12단계 결판)</div>
+                <div className="font-bold text-stone-200">최후의 변론 및 최종 결판</div>
                 <div className="text-[11px] text-stone-400">비밀 지목 및 최종 결판 오픈</div>
               </div>
               {onUnlockGate && (
@@ -142,7 +142,7 @@ export default function TabBooklet({
 
             <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 flex items-center justify-between gap-2">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-200">관문 3 (13단계 최종 결말)</div>
+                <div className="font-bold text-stone-200">최종 결말 & 진상 해설</div>
                 <div className="text-[11px] text-stone-400">캐릭터별 엔딩 & 해설 오픈</div>
               </div>
               {onUnlockGate && (
@@ -165,7 +165,7 @@ export default function TabBooklet({
         {/* 13단계 상세 마스터 가이드 */}
         <section className="p-4 rounded-xl bg-stone-900/90 border border-stone-800 space-y-3">
           <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5 border-b border-stone-800 pb-2">
-            📜 13단계 상세 진행 가이드
+            📜 상세 진행 가이드
           </h2>
           <div className="space-y-3 text-xs">
             {GM_TIMETABLE_GUIDE.map((g) => (

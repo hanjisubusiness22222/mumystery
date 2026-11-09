@@ -161,7 +161,7 @@ export default function LobbyView({
                     </span>
                   </div>
                   <p className="text-xs text-stone-400 mt-0.5">
-                    전체 진행 가이드 & 4대 관문 해금 컨트롤러
+                    전체 진행 가이드 & 실시간 해금 컨트롤러
                   </p>
                 </div>
               </button>

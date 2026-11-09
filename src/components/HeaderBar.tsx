@@ -114,7 +114,7 @@ export default function HeaderBar({
               <div className="flex items-center gap-2">
                 <HelpCircle className="w-4 h-4 text-amber-400" />
                 <h3 className="font-bold text-amber-100 text-sm">
-                  13단계 진행 순서 & 권장 시간 (총 120분)
+                  진행 순서 & 권장 시간 (총 120분)
                 </h3>
               </div>
               <button
@@ -144,7 +144,7 @@ export default function HeaderBar({
 
                   <div className="space-y-2 text-stone-300">
                     <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
-                      <span className="text-xs">🔒 관문 0 (3단계 1차 조사 시작):</span>
+                      <span className="text-xs">1차 단서 조사 시작:</span>
                       {onUnlockGate && (
                         <button
                           onClick={() => onUnlockGate(0)}
@@ -161,7 +161,7 @@ export default function HeaderBar({
                     </div>
 
                     <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
-                      <span className="text-xs">🔒 관문 1 (5단계 긴급 상황 발생):</span>
+                      <span className="text-xs">긴급 상황 (새로운 국면):</span>
                       {onUnlockGate && (
                         <button
                           onClick={() => onUnlockGate(1)}
@@ -178,7 +178,7 @@ export default function HeaderBar({
                     </div>
 
                     <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
-                      <span className="text-xs">🔒 관문 2 (9단계 최후 결판 단계):</span>
+                      <span className="text-xs">최후 변론 & 최종 결판:</span>
                       {onUnlockGate && (
                         <button
                           onClick={() => onUnlockGate(2)}
@@ -195,7 +195,7 @@ export default function HeaderBar({
                     </div>
 
                     <div className="flex justify-between items-center bg-stone-900/60 p-2 rounded-lg gap-2">
-                      <span className="text-xs">🔒 관문 3 (13단계 최종 결말 & 해설):</span>
+                      <span className="text-xs">최종 결말 & 진상 해설:</span>
                       {onUnlockGate && (
                         <button
                           onClick={() => onUnlockGate(3)}

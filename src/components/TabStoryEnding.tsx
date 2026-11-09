@@ -154,7 +154,7 @@ export default function TabStoryEnding({
                 onClick={() => onUnlockGate(1)}
                 className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow-lg transition"
               >
-                🔓 [마스터 전용] 5단계 긴급 상황 즉시 해금하기 (전체 플레이어 동기화)
+                🔓 [마스터 전용] 긴급 상황 즉시 해금하기 (전체 플레이어 동기화)
               </button>
             ) : (
               <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">
@@ -216,7 +216,7 @@ export default function TabStoryEnding({
                 onClick={() => onUnlockGate(2)}
                 className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow-lg transition"
               >
-                🔓 [마스터 전용] 9~12단계 최종 결판 즉시 해금하기 (전체 플레이어 동기화)
+                🔓 [마스터 전용] 최종 결판 즉시 해금하기 (전체 플레이어 동기화)
               </button>
             ) : (
               <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">
@@ -572,7 +572,7 @@ export default function TabStoryEnding({
                 onClick={() => onUnlockGate(3)}
                 className="w-full py-2.5 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow-lg transition"
               >
-                🔓 [마스터 전용] 13단계 최종 결말 및 진상 해설 해금하기 (전체 플레이어 동기화)
+                🔓 [마스터 전용] 최종 결말 및 진상 해설 해금하기 (전체 플레이어 동기화)
               </button>
             ) : (
               <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">

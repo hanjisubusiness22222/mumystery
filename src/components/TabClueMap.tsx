@@ -313,7 +313,7 @@ export default function TabClueMap({
                     }}
                     className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shadow transition"
                   >
-                    🔓 [마스터 전용] 5단계 긴급 상황 즉시 해금하기
+                    🔓 [마스터 전용] 긴급 상황 즉시 해금하기
                   </button>
                 </div>
               )}
