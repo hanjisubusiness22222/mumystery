@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CHARACTERS, CHARACTER_MAP } from '@/data/characters';
+import { GM_TIMETABLE_GUIDE, GATE_PASSWORDS } from '@/data/timetable';
 import { CharacterData, CharacterId, CharacterSkill, RoomState } from '@/types/game';
 import {
   BookOpen,
@@ -45,6 +46,75 @@ export default function TabBooklet({
   const residentList = CHARACTERS.filter(
     (c) => c.id !== 'clive' && (room.playerCount === 7 || !c.onlySevenPlayer)
   );
+
+  // 진행자(GM) 전용 마스터 대시보드 화면
+  if (character.id === 'gm') {
+    return (
+      <div className="space-y-5 pb-8">
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-950 via-stone-900 to-stone-900 border border-amber-600/70 shadow-lg space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-900 text-amber-200 border border-amber-500/60">
+              🎩 진행자(GM) 전용 마스터 대시보드
+            </span>
+            <span className="text-xs text-amber-300 font-semibold">
+              방 코드: {room.roomCode} ({room.playerCount}인 모드)
+            </span>
+          </div>
+          <p className="text-sm font-bold text-amber-100 pt-1">
+            테이블의 몰입과 시간을 책임지는 마스터 컨트롤 타워입니다.
+          </p>
+        </div>
+
+        {/* 4대 관문 해금 컨트롤러 */}
+        <section className="p-4 rounded-xl bg-stone-900/90 border border-amber-600/50 space-y-3">
+          <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5 border-b border-stone-800 pb-2">
+            🔑 4대 관문 해금 암호 (플레이어에게 적절한 순간에 공개)
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
+              <div className="text-stone-400">관문 0 (3단계 1차 조사 시작)</div>
+              <div className="text-base font-mono font-extrabold text-amber-400">
+                {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
+              <div className="text-stone-400">관문 1 (5단계 새로운 이벤트 발생)</div>
+              <div className="text-base font-mono font-extrabold text-amber-400">
+                {GATE_PASSWORDS.GATE_1_MID_EVENT}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
+              <div className="text-stone-400">관문 2 (9단계 비밀 지목 & 결판)</div>
+              <div className="text-base font-mono font-extrabold text-amber-400">
+                {GATE_PASSWORDS.GATE_2_CLIMAX}
+              </div>
+            </div>
+            <div className="p-3 rounded-xl bg-stone-950 border border-stone-800 space-y-1">
+              <div className="text-stone-400">관문 3 (13단계 엔딩 & 진상 해설)</div>
+              <div className="text-base font-mono font-extrabold text-amber-400">
+                {GATE_PASSWORDS.GATE_3_ENDING}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 13단계 상세 마스터 가이드 */}
+        <section className="p-4 rounded-xl bg-stone-900/90 border border-stone-800 space-y-3">
+          <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5 border-b border-stone-800 pb-2">
+            📜 13단계 상세 진행 가이드
+          </h2>
+          <div className="space-y-3 text-xs">
+            {GM_TIMETABLE_GUIDE.map((g) => (
+              <div key={g.step} className="p-3 rounded-xl bg-stone-950 border border-stone-800/80 space-y-1">
+                <div className="font-bold text-amber-200">{g.title}</div>
+                <p className="text-stone-300 leading-relaxed">{g.actions}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5 pb-8">

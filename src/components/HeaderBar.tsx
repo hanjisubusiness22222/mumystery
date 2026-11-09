@@ -126,57 +126,63 @@ export default function HeaderBar({
                 💡 <b>오프라인 진행 팁</b>: 앱 내 강제 타이머 없이 진행자가 오프라인에서 시간을 재며 유연하게 진행합니다. 조사 시작과 반전, 결말은 <b>해금 비밀번호</b>를 입력해야 열립니다.
               </div>
 
-              {/* 진행자 전용 암호 확인 토글 */}
-              <div className="p-3 rounded-lg bg-stone-950 border border-stone-800">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-amber-300">
-                    🎩 진행자(방장) 전용 4대 해금 암호
-                  </span>
-                  <button
-                    onClick={() => setShowHostPasswords(!showHostPasswords)}
-                    className="flex items-center gap-1 px-2 py-1 rounded bg-stone-800 hover:bg-stone-700 text-stone-200 text-[11px]"
-                  >
-                    {showHostPasswords ? (
-                      <>
-                        <EyeOff className="w-3 h-3" /> 암호 숨기기
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="w-3 h-3" /> 암호 보기
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {showHostPasswords && (
-                  <div className="mt-2.5 pt-2.5 border-t border-stone-800 space-y-1.5 text-stone-300">
-                    <div className="flex justify-between">
-                      <span>🔒 관문 0 (3단계: 1차 조사 시작 해금):</span>
-                      <code className="font-mono font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded">
-                        {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}
-                      </code>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>🔒 관문 1 (5단계: 빈 무덤 반전 & 2차 조사):</span>
-                      <code className="font-mono font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded">
-                        {GATE_PASSWORDS.GATE_1_MID_EVENT}
-                      </code>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>🔒 관문 2 (9~12단계: 비밀 지목 & 추격전):</span>
-                      <code className="font-mono font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded">
-                        {GATE_PASSWORDS.GATE_2_CLIMAX}
-                      </code>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>🔒 관문 3 (13단계: 멀티 엔딩 & 진상 해설):</span>
-                      <code className="font-mono font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded">
-                        {GATE_PASSWORDS.GATE_3_ENDING}
-                      </code>
-                    </div>
+              {/* 진행자 전용 암호 확인 (오직 진행자(GM)로 로그인한 경우에만 노출!) */}
+              {character.id === 'gm' ? (
+                <div className="p-3 rounded-lg bg-stone-950 border border-amber-700/60 shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-amber-300">
+                      🎩 진행자 전용 4대 관문 해금 암호
+                    </span>
+                    <button
+                      onClick={() => setShowHostPasswords(!showHostPasswords)}
+                      className="flex items-center gap-1 px-2 py-1 rounded bg-amber-950/80 hover:bg-amber-900 border border-amber-600/50 text-amber-200 text-[11px]"
+                    >
+                      {showHostPasswords ? (
+                        <>
+                          <EyeOff className="w-3 h-3" /> 암호 숨기기
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-3 h-3" /> 암호 보기
+                        </>
+                      )}
+                    </button>
                   </div>
-                )}
-              </div>
+
+                  {showHostPasswords && (
+                    <div className="mt-2.5 pt-2.5 border-t border-stone-800 space-y-2 text-stone-300">
+                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
+                        <span>🔒 관문 0 (3단계 1차 조사 시작):</span>
+                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
+                          {GATE_PASSWORDS.GATE_0_ACT1_INVESTIGATION}
+                        </code>
+                      </div>
+                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
+                        <span>🔒 관문 1 (5단계 새로운 이벤트 발생):</span>
+                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
+                          {GATE_PASSWORDS.GATE_1_MID_EVENT}
+                        </code>
+                      </div>
+                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
+                        <span>🔒 관문 2 (9단계 비밀 지목 & 결판):</span>
+                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
+                          {GATE_PASSWORDS.GATE_2_CLIMAX}
+                        </code>
+                      </div>
+                      <div className="flex justify-between items-center bg-stone-900/60 p-1.5 rounded">
+                        <span>🔒 관문 3 (13단계 엔딩 & 진상 해설):</span>
+                        <code className="font-mono font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded text-sm">
+                          {GATE_PASSWORDS.GATE_3_ENDING}
+                        </code>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-2.5 rounded-lg bg-stone-950 border border-stone-800 text-stone-400 text-center">
+                  🔒 단계별 해금 암호는 <b>게임 진행자(GM)</b>의 안내에 따라 공개됩니다.
+                </div>
+              )}
 
               {/* 13단계 리스트 */}
               <div className="space-y-2">

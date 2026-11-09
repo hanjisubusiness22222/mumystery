@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CHARACTERS } from '@/data/characters';
+import { CHARACTERS, GM_CHARACTER } from '@/data/characters';
 import { CharacterData, CharacterId } from '@/types/game';
 import { Shield, Users, Sparkles, Lock } from 'lucide-react';
 
@@ -25,7 +25,7 @@ export default function LobbyView({
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState('');
 
-  // 캐릭터별 전용 비밀번호 매핑 (A, B, C, D, E, F, G 순: 111 ~ 117)
+  // 캐릭터별 전용 비밀번호 매핑 (A, B, C, D, E, F, G: 111~117 / GM: 0000)
   const CHARACTER_PINS: Record<CharacterId, string> = {
     annie: '111',
     benny: '112',
@@ -34,6 +34,7 @@ export default function LobbyView({
     ernest: '115',
     florence: '116',
     grace: '117',
+    gm: '0000',
   };
 
   const handleOpenPinModal = (char: CharacterData) => {
@@ -174,6 +175,31 @@ export default function LobbyView({
                 </div>
               </button>
             ))}
+
+            {/* 별도 게임 진행자(GM) 선택 버튼 */}
+            <div className="pt-2">
+              <button
+                onClick={() => handleOpenPinModal(GM_CHARACTER)}
+                className="w-full text-left p-3.5 rounded-xl bg-gradient-to-r from-stone-900 to-amber-950/40 border border-amber-600/60 hover:border-amber-400 transition shadow-lg flex items-center gap-3.5"
+              >
+                <div className="text-3xl bg-stone-950 w-12 h-12 rounded-xl flex items-center justify-center border border-amber-700/60 shrink-0">
+                  🎩
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-bold text-amber-200 text-sm">
+                      게임 진행자 (GM)
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/60 text-amber-300 shrink-0 font-semibold">
+                      진행 마스터
+                    </span>
+                  </div>
+                  <p className="text-xs text-stone-400 mt-0.5">
+                    전체 진행 가이드 & 4대 관문 해금 컨트롤러 (비밀번호: 0000)
+                  </p>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>

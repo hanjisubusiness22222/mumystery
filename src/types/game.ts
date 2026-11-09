@@ -5,7 +5,8 @@ export type CharacterId =
   | 'david'
   | 'ernest'
   | 'florence'
-  | 'grace';
+  | 'grace'
+  | 'gm';
 
 export type FactionType = 'kill_subdue' | 'survival';
 
