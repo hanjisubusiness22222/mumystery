@@ -96,22 +96,22 @@ export interface RoomState {
   roomCode: string;
   scenarioId?: string; // 확장형 멀티 시나리오 식별자 (기본값: 'new-frontier')
   playerCount: 6 | 7;
-  // 4대 진행/스포일러 관문 해금 여부
-  gate0Unlocked: boolean; // 암호: 0301 (3단계 1차 조사 시작 해금 — 자기소개 전 카드 선점 방지)
-  gate1Unlocked: boolean; // 암호: 1889 (5단계 빈 무덤의 반전 & 2차 조사 구역 6,7 오픈)
-  gate2Unlocked: boolean; // 암호: 0607 (9~12단계 비밀 지목 & 행크 추격전 오픈)
-  gate3Unlocked: boolean; // 암호: 9999 (13단계 멀티 엔딩 & 사건의 전말 오픈)
+  // 4대 핵심 진행 구간 마스터 해금 여부
+  gate0Unlocked: boolean; // 1차 단서 조사 시작 해금 (자기소개 전 카드 선점 방지)
+  gate1Unlocked: boolean; // 긴급 상황 발생 (새로운 국면) & 2차 조사 구역 6,7 오픈
+  gate2Unlocked: boolean; // 최후 변론 직후 비밀 지목 & 행크 추격전 오픈
+  gate3Unlocked: boolean; // 최종 엔딩 & 사건의 전말 해설서 오픈
   // 카드 소유 상태: cardId -> CharacterId | null
   cardOwners: Record<string, CharacterId | null>;
   // 클라이브의 사법거래 회유서 수락 주민
   bribedResident: CharacterId | null;
-  // 9단계 1분 비밀 지목 (최후 변론 직후)
+  // 최후 변론 직후 비밀 지목
   cliveSecretPick: CharacterId | null; // 행크의 조력자 지목 (플로렌스 or 그레이스 정답)
   graceSecretPick: CharacterId | null; // 매드독 지목 (클라이브 정답)
-  // 11단계 최종 투표 유치장 수감자
+  // 최종 투표 유치장 수감자
   jailedCharacter: CharacterId | null;
   cliveEscapeRoll: number | null; // 클라이브 수감 시 탈옥 주사위 (4 이상 탈옥 성공)
-  // 12단계 행크 추격전 주사위 눈금 (1~6)
+  // 최후의 결판: 행크 추격전 주사위 눈금 (1~6)
   chaseDiceRolls: Partial<Record<CharacterId, number>>;
   updatedAt: number;
 }

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { CharacterData, RoomState } from '@/types/game';
-import { TIMETABLE_STEPS, GATE_PASSWORDS } from '@/data/timetable';
+import { TIMETABLE_STEPS } from '@/data/timetable';
 import { Lock, Unlock, Compass, Dices, HelpCircle, LogOut, Eye, EyeOff, RotateCcw } from 'lucide-react';
 
 interface HeaderBarProps {
@@ -106,7 +106,7 @@ export default function HeaderBar({
         </div>
       </header>
 
-      {/* 타임테이블 & 진행자 암호 안내 모달 */}
+      {/* 타임테이블 안내 모달 */}
       {showGuideModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-stone-900 border border-amber-700/60 rounded-xl max-w-md w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
@@ -127,10 +127,10 @@ export default function HeaderBar({
 
             <div className="p-4 overflow-y-auto space-y-4 text-xs">
               <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/50 text-amber-200/90 leading-relaxed">
-                💡 <b>오프라인 진행 팁</b>: 앱 내 강제 타이머 없이 진행자가 오프라인에서 시간을 재며 유연하게 진행합니다. 조사 시작과 반전, 결말은 <b>해금 비밀번호</b>를 입력해야 열립니다.
+                💡 <b>오프라인 진행 팁</b>: 앱 내 강제 타이머 없이 진행자가 오프라인에서 시간을 재며 유연하게 진행합니다. 조사 시작과 긴급 상황, 결말은 <b>마스터의 원터치 해금</b>으로 실시간 오픈됩니다.
               </div>
 
-              {/* 진행자 전용 암호 확인 (오직 진행자(GM)로 로그인한 경우에만 노출!) */}
+              {/* 진행자 전용 해금 컨트롤러 (오직 진행자(GM)로 로그인한 경우에만 노출!) */}
               {character.id === 'gm' ? (
                 <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-700/60 shadow-inner space-y-2.5">
                   <div className="flex items-center justify-between">
@@ -214,11 +214,11 @@ export default function HeaderBar({
                 </div>
               ) : (
                 <div className="p-2.5 rounded-lg bg-stone-950 border border-stone-800 text-stone-400 text-center">
-                  🔒 단계별 해금 암호는 <b>게임 진행자(GM)</b>의 안내에 따라 공개됩니다.
+                  💡 주요 구간은 <b>게임 진행자(마스터)</b>의 원터치 해금에 따라 실시간으로 자동 오픈됩니다.
                 </div>
               )}
 
-              {/* 13단계 리스트 */}
+              {/* 진행 타임테이블 리스트 */}
               <div className="space-y-2">
                 {TIMETABLE_STEPS.map((item) => {
                   const isUnlocked =
@@ -243,7 +243,7 @@ export default function HeaderBar({
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-stone-100">
-                          {item.step}단계. {item.title}
+                          {item.title}
                         </span>
                         <div className="flex items-center gap-1.5">
                           {item.gateNumber !== undefined && (
@@ -254,7 +254,7 @@ export default function HeaderBar({
                                   : 'bg-rose-950 text-rose-300 border border-rose-700/50'
                               }`}
                             >
-                              {isUnlocked ? '해금됨' : `잠김(관문${item.gateNumber})`}
+                              {isUnlocked ? '해금 완료' : '진행 대기'}
                             </span>
                           )}
                           <span className="text-[11px] font-semibold text-amber-400 bg-stone-900 px-2 py-0.5 rounded border border-stone-700">

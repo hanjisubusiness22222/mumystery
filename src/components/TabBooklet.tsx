@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { CHARACTERS, CHARACTER_MAP } from '@/data/characters';
-import { GM_TIMETABLE_GUIDE, GATE_PASSWORDS } from '@/data/timetable';
+import { GM_TIMETABLE_GUIDE } from '@/data/timetable';
 import { CharacterData, CharacterId, CharacterSkill, RoomState } from '@/types/game';
 import {
   BookOpen,
@@ -65,7 +65,7 @@ export default function TabBooklet({
           </p>
         </div>
 
-        {/* 4대 관문 해금 컨트롤러 */}
+        {/* 마스터 원터치 전원 해금 제어판 */}
         <section className="p-4 rounded-xl bg-stone-900/90 border border-amber-600/50 space-y-3">
           <div className="flex items-center justify-between border-b border-stone-800 pb-2">
             <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5">
@@ -76,7 +76,7 @@ export default function TabBooklet({
             </span>
           </div>
           <p className="text-xs text-stone-300 leading-relaxed">
-            마스터가 아래 버튼을 누르면 <b>모든 플레이어의 기기에서 해당 단계가 즉시 자동 해금</b>되어 실시간 동기화됩니다.
+            마스터가 아래 버튼을 누르면 <b>모든 플레이어의 기기에서 해당 구간이 즉시 자동 해금</b>되어 실시간 동기화됩니다.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">

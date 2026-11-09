@@ -122,7 +122,7 @@ export default function TabStoryEnding({
         </div>
       </section>
 
-      {/* 2. 관문 1: 5단계 ★빈 무덤의 반전 (암호: 1889) */}
+      {/* 2. 긴급 상황 발생 (새로운 국면) */}
       <section className="p-4 rounded-2xl bg-stone-900 border border-amber-700/60 space-y-3">
         <div className="flex items-center justify-between border-b border-stone-800 pb-2">
           <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5">
@@ -184,7 +184,7 @@ export default function TabStoryEnding({
         )}
       </section>
 
-      {/* 3. 관문 2: 9~12단계 ★비밀 지목 & 행크 추격전 결판 (암호: 0607) */}
+      {/* 3. 비밀 지목 & 최후의 결판 */}
       <section className="p-4 rounded-2xl bg-stone-900 border border-amber-700/60 space-y-4">
         <div className="flex items-center justify-between border-b border-stone-800 pb-2">
           <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5">
@@ -540,7 +540,7 @@ export default function TabStoryEnding({
         )}
       </section>
 
-      {/* 4. 관문 3: 13단계 ★멀티 엔딩 북 & 진상 해설서 (암호: 9999) */}
+      {/* 4. 최종 결말 & 사건의 전말 해설서 */}
       <section className="p-4 rounded-2xl bg-stone-900 border border-amber-700/60 space-y-4">
         <div className="flex items-center justify-between border-b border-stone-800 pb-2">
           <h2 className="text-sm font-bold text-amber-300 flex items-center gap-1.5">

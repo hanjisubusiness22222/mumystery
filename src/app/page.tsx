@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { CHARACTER_MAP } from '@/data/characters';
 import { CLUE_CARDS } from '@/data/cards';
-import { GATE_PASSWORDS } from '@/data/timetable';
 import { CharacterId, RoomState } from '@/types/game';
 import { supabase } from '@/lib/supabase';
 import LobbyView from '@/components/LobbyView';

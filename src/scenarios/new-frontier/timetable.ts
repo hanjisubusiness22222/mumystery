@@ -1,13 +1,6 @@
 import { TimetableStep } from '@/types/game';
 
-export const GATE_PASSWORDS = {
-  GATE_0_ACT1_INVESTIGATION: '0301', // 3단계 1차 조사 시작 해금 (자기소개 전 카드 클릭 방지)
-  GATE_1_MID_EVENT: '1889', // 5단계 새로운 이벤트 발생 & 2차 조사 구역 해금
-  GATE_2_CLIMAX: '0607', // 9~12단계 비밀 지목 & 결판 단계 해금
-  GATE_3_ENDING: '9999' // 13단계 멀티 엔딩 & 사건의 전말 해설서 해금
-};
-
-// 일반 플레이어에게 노출되는 스포일러 0% 타임테이블
+// 일반 플레이어 및 마스터 타임테이블
 export const TIMETABLE_STEPS: TimetableStep[] = [
   {
     step: 1,
@@ -37,7 +30,7 @@ export const TIMETABLE_STEPS: TimetableStep[] = [
   },
   {
     step: 5,
-    title: '★새로운 이벤트 발생',
+    title: '긴급 상황 발생 (새로운 국면)',
     minutes: 5,
     description: '진행자의 안내에 따라 새로운 국면 돌입 및 추가 구역 오픈',
     isHighlight: true,
@@ -57,14 +50,14 @@ export const TIMETABLE_STEPS: TimetableStep[] = [
   },
   {
     step: 8,
-    title: '★최후 변론 (광장 발언)',
+    title: '최후 변론 (광장 발언)',
     minutes: 7,
     description: '결정적 국면 돌입 전, 1인당 1분씩 최후의 호소 및 의심자 지목 발언',
     isHighlight: true
   },
   {
     step: 9,
-    title: '★최후의 비밀 지목',
+    title: '최후의 비밀 지목',
     minutes: 1,
     description: '진행자의 신호에 따라 특정 인물들의 비밀 선택 진행',
     isHighlight: true,
@@ -72,25 +65,25 @@ export const TIMETABLE_STEPS: TimetableStep[] = [
   },
   {
     step: 10,
-    title: '행동 단계',
+    title: '행동 스킬 발동',
     minutes: 5,
     description: '각자의 특수 시그니처 능력 발동 및 전략 실행'
   },
   {
     step: 11,
-    title: '최종 투표 단계',
+    title: '최종 용의자 투표',
     minutes: 5,
     description: '용의자 지목 투표 및 체포자 판정'
   },
   {
     step: 12,
-    title: '최후의 결판',
+    title: '최종 결판 (주사위 판정)',
     minutes: 5,
     description: '운명을 가르는 최종 주사위 판정'
   },
   {
     step: 13,
-    title: '엔딩 낭독 & 점수 정산',
+    title: '최종 결말 낭독 & 점수 정산',
     minutes: 11,
     description: '최종 엔딩 낭독, 목표 점수 채점 및 사건의 전말 공개',
     isHighlight: true,
@@ -98,7 +91,7 @@ export const TIMETABLE_STEPS: TimetableStep[] = [
   }
 ];
 
-// 진행자(GM) 전용 상세 마스터 가이드
+// 진행자(GM/마스터) 전용 상세 마스터 가이드
 export const GM_TIMETABLE_GUIDE = [
   {
     step: 1,
@@ -113,7 +106,7 @@ export const GM_TIMETABLE_GUIDE = [
   {
     step: 3,
     title: '1차 단서 조사 (8분)',
-    actions: '플레이어들에게 암호 0301을 공개하여 1~5구역 카드를 스네이크 드래프트로 2장씩 뽑도록 지시합니다.'
+    actions: '마스터 원터치 버튼으로 1차 조사를 해금하고, 플레이어들이 1~5구역 카드를 스네이크 드래프트로 2장씩 뽑도록 지시합니다.'
   },
   {
     step: 4,
@@ -123,7 +116,7 @@ export const GM_TIMETABLE_GUIDE = [
   {
     step: 5,
     title: '긴급 상황 발생 (새로운 국면) (5분)',
-    actions: '암호 1889를 공개합니다! "행크의 빈 무덤" 사건 대본을 낭독하고, 6~7구역 및 히든 미션을 해금시킵니다.'
+    actions: '마스터 원터치 버튼으로 긴급 상황을 해금합니다! "행크의 빈 무덤" 사건 대본을 낭독하고, 6~7구역 및 히든 미션을 활성화시킵니다.'
   },
   {
     step: 6,
@@ -143,16 +136,16 @@ export const GM_TIMETABLE_GUIDE = [
   {
     step: 9,
     title: '최후의 비밀 지목 (1분)',
-    actions: '암호 0607을 공개하여 클라이브(조력자 지목)와 그레이스(매드독 지목)가 앱에서 1분 비밀 지목을 완료하게 합니다.'
+    actions: '마스터 원터치 버튼으로 결판을 해금하여 클라이브(조력자 지목)와 그레이스(매드독 지목)가 앱에서 비밀 지목을 완료하게 합니다.'
   },
   {
     step: 10,
-    title: '행동 단계 (스킬 사용) (5분)',
+    title: '행동 스킬 발동 (5분)',
     actions: '행동 스킬을 번호 순서대로 진행합니다: 1번(클라이브: 총구 겨누기) -> 2번(애니: 수면제) -> 3번(데이비드: 아이템 압수) -> 4번(플로렌스: 현장 도주). (※ 그레이스는 공격당할 때 즉시 은빛 십자가로 방어 가능)'
   },
   {
     step: 11,
-    title: '최종 투표 (5분)',
+    title: '최종 용의자 투표 (5분)',
     actions: '동시에 손가락으로 용의자 1명을 지목하게 하고, 앱에 수감자를 체크합니다. (클라이브 수감 시 탈옥 주사위 4 이상 판정)'
   },
   {
@@ -163,6 +156,6 @@ export const GM_TIMETABLE_GUIDE = [
   {
     step: 13,
     title: '최종 결말 낭독 & 점수 정산 (11분)',
-    actions: '암호 9999를 공개하여 최종 1등 캐릭터의 엔딩을 낭독하고, 진상 해설서를 열어 사건의 전말을 공개합니다.'
+    actions: '마스터 원터치 버튼으로 결말을 해금하여 최종 1등 캐릭터의 엔딩을 낭독하고, 진상 해설서를 열어 사건의 전말을 공개합니다.'
   }
 ];

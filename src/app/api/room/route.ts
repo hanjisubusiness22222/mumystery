@@ -4,7 +4,6 @@ import path from 'path';
 import os from 'os';
 import { CharacterId, RoomState } from '@/types/game';
 import { CLUE_CARDS } from '@/data/cards';
-import { GATE_PASSWORDS } from '@/data/timetable';
 
 // Vercel serverless writable path
 const STORE_PATH = path.join(os.tmpdir(), 'mumystery-room-store.json');
@@ -110,7 +109,7 @@ export async function POST(req: NextRequest) {
       case 'acquire_card': {
         if (!room.gate0Unlocked) {
           return NextResponse.json(
-            { error: '아직 1차 조사 단계가 시작되지 않았습니다. 진행자의 조사 해금 암호(0301)를 먼저 입력해 주세요.' },
+            { error: '아직 1차 조사 단계가 시작되지 않았습니다. 마스터의 원터치 해금을 기다려 주세요.' },
             { status: 400 }
           );
         }

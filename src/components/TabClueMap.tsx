@@ -98,7 +98,7 @@ export default function TabClueMap({
         )}
       </div>
 
-      {/* 관문 0 잠금: 1차 조사 시작 전 잠금 화면 */}
+      {/* 1차 단서 조사 시작 전 잠금 화면 */}
       {!room.gate0Unlocked ? (
         <div className="p-5 rounded-2xl bg-stone-900 border-2 border-amber-700/70 space-y-3 text-center shadow-xl">
           <div className="w-12 h-12 rounded-2xl bg-amber-950/80 border border-amber-600/60 flex items-center justify-center mx-auto text-amber-400">
