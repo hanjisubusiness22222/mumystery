@@ -366,7 +366,7 @@ export const CHARACTERS: CharacterData[] = [
         label: '기본 목표 3',
         points: 3,
         title: '치료한 환자(행크)의 생존을 지킨다',
-        description: '새벽에 응급 수술해 살려낸 행크가 마을 사람들에게 살해당하지 않고 무사히 탈출하도록 지켜낸다. (5단계 새로운 이벤트 발생 후 상세 결판 방식 해금)'
+        description: '새벽에 응급 수술해 살려낸 행크가 마을 사람들에게 살해당하지 않고 무사히 탈출하도록 지켜낸다. (새로운 사건 발생 후 상세 결판 방식 해금)'
       }
     ],
     skills: [
@@ -413,7 +413,7 @@ export const CHARACTERS: CharacterData[] = [
         label: '기본 목표 1',
         points: 5,
         title: '아버지(행크)의 생존을 지킨다',
-        description: '실종된 아버지가 살해당하지 않고 무사히 살아남아 참회하도록 돕는다. (5단계 새로운 이벤트 발생 후 상세 결판 방식 해금)',
+        description: '실종된 아버지가 살해당하지 않고 무사히 살아남아 참회하도록 돕는다. (새로운 사건 발생 후 상세 결판 방식 해금)',
         canBeReplacedByBribe: true
       },
       {

@@ -131,7 +131,7 @@ export default function TabStoryEnding({
             ) : (
               <Lock className="w-4 h-4 text-amber-400" />
             )}
-            5단계. 긴급 상황 발생 (새로운 국면)
+            긴급 상황 발생 (새로운 국면)
           </h2>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
@@ -140,14 +140,14 @@ export default function TabStoryEnding({
                 : 'bg-amber-950 text-amber-300 border border-amber-700/50'
             }`}
           >
-            {room.gate1Unlocked ? '해금 완료' : '🔒 관문 1 잠김'}
+            {room.gate1Unlocked ? '해금 완료' : '🔒 대기 중'}
           </span>
         </div>
 
         {!room.gate1Unlocked ? (
           <div className="space-y-3 py-1">
             <p className="text-xs text-stone-300 leading-relaxed">
-              4단계 전반전 대화와 밀담(20분)이 종료된 후, 마스터(진행자)가 5단계를 해금하면 새로운 사건 대본과 2차 조사 구역이 열립니다.
+              전반전 대화와 밀담이 종료된 후, 마스터(진행자)가 사건을 해금하면 새로운 사건 대본과 추가 조사 구역이 열립니다.
             </p>
             {character.id === 'gm' ? (
               <button
@@ -158,7 +158,7 @@ export default function TabStoryEnding({
               </button>
             ) : (
               <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">
-                ⏳ 마스터의 5단계 긴급 상황 해금을 기다리고 있습니다...
+                ⏳ 마스터의 사건 해금을 기다리고 있습니다...
               </div>
             )}
           </div>
@@ -193,7 +193,7 @@ export default function TabStoryEnding({
             ) : (
               <Lock className="w-4 h-4 text-amber-400" />
             )}
-            9~12단계. 최후의 변론 및 최종 결판
+            최후의 변론 및 최종 결판
           </h2>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
@@ -202,14 +202,14 @@ export default function TabStoryEnding({
                 : 'bg-amber-950 text-amber-300 border border-amber-700/50'
             }`}
           >
-            {room.gate2Unlocked ? '해금 완료' : '🔒 관문 2 잠김'}
+            {room.gate2Unlocked ? '해금 완료' : '🔒 대기 중'}
           </span>
         </div>
 
         {!room.gate2Unlocked ? (
           <div className="space-y-3 py-1">
             <p className="text-xs text-stone-300 leading-relaxed">
-              8단계 최후 변론(7분)이 끝난 직후, 마스터(진행자)가 결판 단계를 해금하면 <b>최후의 비밀 지목</b>과 <b>최종 투표 및 결판 단계</b>가 열립니다.
+              최후 변론이 끝난 직후, 마스터(진행자)가 결판을 해금하면 <b>최후의 비밀 지목</b>과 <b>최종 투표 및 결판</b>이 열립니다.
             </p>
             {character.id === 'gm' ? (
               <button
@@ -220,7 +220,7 @@ export default function TabStoryEnding({
               </button>
             ) : (
               <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-center text-xs text-amber-400 font-semibold animate-pulse">
-                ⏳ 마스터의 최종 결판 단계 해금을 기다리고 있습니다...
+                ⏳ 마스터의 최종 결판 해금을 기다리고 있습니다...
               </div>
             )}
           </div>
@@ -230,7 +230,7 @@ export default function TabStoryEnding({
             <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-700/50 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                  <Crosshair className="w-4 h-4 text-amber-400" /> [9단계] 최후 변론 직후 1분 비밀 지목
+                  <Crosshair className="w-4 h-4 text-amber-400" /> 최후 변론 직후 비밀 지목
                 </h3>
                 <span className="text-[10px] text-stone-400">
                   행동 단계 돌입 전 실시
@@ -302,7 +302,7 @@ export default function TabStoryEnding({
                     ⛪ [그레이스 전용] &lsquo;매드독&rsquo;의 정체(+3점 목표) 비밀 지목
                   </div>
                   <p className="text-[11px] text-stone-300">
-                    10년 전 매드독 갱단을 몰살한 두목 &lsquo;매드독&rsquo;으로 의심되는 인물 1명을 선택하세요. (선택 내역은 13단계 엔딩 해금 전까지 비공개됩니다)
+                    10년 전 매드독 갱단을 몰살한 두목 &lsquo;매드독&rsquo;으로 의심되는 인물 1명을 선택하세요. (선택 내역은 최종 결말 해금 전까지 비공개됩니다)
                   </p>
                   <div className="grid grid-cols-2 gap-1.5 pt-1">
                     {activeChars
@@ -334,10 +334,10 @@ export default function TabStoryEnding({
             {/* 11단계: 최종 투표 유치장 수감자 지정 & 클라이브 탈옥 주사위 */}
             <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-3">
               <h3 className="text-xs font-bold text-amber-300">
-                ⛓️ [11단계] 최종 투표 최다 득표자 (유치장 수감 1인)
+                ⛓️ 최종 투표 최다 득표자 (유치장 수감 1인)
               </h3>
               <p className="text-[11px] text-stone-400">
-                10단계(행동 스킬)와 11단계(최종 투표) 결과, 최다 득표로 유치장에 수감된 인물 1명을 선택하세요. 수감자는 추격전에 참여할 수 없습니다.
+                투표 결과 최다 득표로 유치장에 수감된 인물 1명을 선택하세요. 수감자는 최종 결판에 참여할 수 없습니다.
               </p>
 
               <div className="flex flex-wrap gap-1.5">
@@ -420,7 +420,7 @@ export default function TabStoryEnding({
             <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-700/60 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                  <Dices className="w-4 h-4 text-amber-400" /> [12단계] 행크 추격전 주사위 결판 (막타 독점)
+                  <Dices className="w-4 h-4 text-amber-400" /> 행크 추격전 최종 결판 (주사위 판정)
                 </h3>
                 <span className="text-[10px] text-stone-400">
                   최종 눈금 = 1d6 + 아이템 보너스(개당 +1)
@@ -549,7 +549,7 @@ export default function TabStoryEnding({
             ) : (
               <Lock className="w-4 h-4 text-amber-400" />
             )}
-            13단계. 결말 & 진상 해설서
+            최종 결말 & 진상 해설서
           </h2>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
@@ -558,7 +558,7 @@ export default function TabStoryEnding({
                 : 'bg-amber-950 text-amber-300 border border-amber-700/50'
             }`}
           >
-            {room.gate3Unlocked ? '해금 완료' : '🔒 관문 3 잠김'}
+            {room.gate3Unlocked ? '해금 완료' : '🔒 대기 중'}
           </span>
         </div>
 
@@ -655,7 +655,7 @@ export default function TabStoryEnding({
             {/* 엔딩 선택 탭 (Ending A ~ G + 애니&베니 공동 1등) */}
             <div className="space-y-3">
               <div className="text-xs text-stone-300 leading-relaxed bg-amber-950/20 p-3 rounded-xl border border-amber-800/40">
-                🏆 <b>엔딩 낭독 규칙</b>: 최종 점수 1위 캐릭터의 이니셜 엔딩을 낭독합니다. (동점 시 <b>[12단계: 행크 추격전] 주사위 1등</b> 우선 승리 / 단, <b>애니와 베니가 공동 1등</b>일 때는 <b>Ending A + B</b>를 함께 연속 낭독!)
+                🏆 <b>엔딩 낭독 규칙</b>: 최종 점수 1위 캐릭터의 이니셜 엔딩을 낭독합니다. (동점 시 <b>행크 추격전 주사위 1등</b> 우선 승리 / 단, <b>애니와 베니가 공동 1등</b>일 때는 <b>Ending A + B</b>를 함께 연속 낭독!)
               </div>
 
               <div className="flex flex-wrap gap-1.5">

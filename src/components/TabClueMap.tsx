@@ -66,7 +66,7 @@ export default function TabClueMap({
           <div className="pt-2 border-t border-amber-800/50 space-y-2 text-[11px] text-stone-200 leading-relaxed">
             <div className="p-2.5 rounded-xl bg-stone-950/80 border border-stone-800 space-y-1">
               <div className="font-bold text-amber-300">
-                ① [3단계: 1차 조사] — 스네이크 드래프트 (1인당 1장씩 2바퀴 = 총 2장)
+                ① [1차 단서 조사] — 스네이크 드래프트 (1인당 1장씩 2바퀴 = 총 2장)
               </div>
               <p>
                 • <b>1바퀴째 (첫 1장)</b>: 수사관 <b>🔫 클라이브부터 시계 방향</b>으로 1장씩 선택합니다.
@@ -85,7 +85,7 @@ export default function TabClueMap({
 
             <div className="p-2.5 rounded-xl bg-stone-950/80 border border-stone-800 space-y-1">
               <div className="font-bold text-amber-300">
-                ② [6단계: 2차 조사] — 역순 시작 (신규 6·7구역 7장 + 1차 잔여 3장 = 총 10장)
+                ② [2차 추가 조사] — 역순 시작 (신규 구역 7장 + 1차 잔여 3장 = 총 10장)
               </div>
               <p>
                 • <b>1바퀴째 (첫 1장)</b>: 1차 조사와 반대로 <b>⛪ 그레이스부터 반시계 방향</b>으로 1장씩 선택합니다 (마지막이 클라이브).
@@ -106,10 +106,10 @@ export default function TabClueMap({
           </div>
           <div className="space-y-1">
             <h3 className="text-sm font-extrabold text-amber-200">
-              [🔒 관문 0 잠김] 3단계: 1차 조사 시작 대기 중
+              [🔒 1차 단서 조사 대기 중]
             </h3>
             <p className="text-xs text-stone-300 leading-relaxed">
-              1단계(설정집 정독)와 2단계(자기소개 및 1차 발언)가 진행 중입니다.
+              설정집 정독과 자기소개가 진행 중입니다.
               <br />
               자기소개가 끝나면 <b>게임 진행자(마스터)</b>가 1차 조사를 해금합니다.
             </p>
@@ -299,10 +299,10 @@ export default function TabClueMap({
           {!room.gate1Unlocked && (
             <div className="p-4 rounded-2xl bg-amber-950/25 border border-amber-700/60 space-y-2.5 text-center">
               <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-300">
-                <Lock className="w-4 h-4" /> [🔒 관문 1 잠김] 5단계: 긴급 상황 발생 & 2차 조사 구역
+                <Lock className="w-4 h-4" /> [🔒 2차 추가 조사 구역 대기 중]
               </div>
               <p className="text-[11px] text-stone-300 leading-relaxed">
-                4단계 전반전 대화와 밀담(20분)이 종료된 후, 마스터가 5단계 긴급 상황을 해금하면 신규 조사 구역 2곳(총 7장)이 새롭게 열립니다.
+                전반전 대화와 밀담이 종료된 후, 마스터가 새로운 국면을 해금하면 신규 조사 구역 2곳(총 7장)이 새롭게 열립니다.
               </p>
               {character.id === 'gm' && (
                 <div className="pt-1 max-w-xs mx-auto">
