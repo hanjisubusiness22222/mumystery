@@ -134,7 +134,7 @@ export default function TabStoryEnding({
             ) : (
               <Lock className="w-4 h-4 text-amber-400" />
             )}
-            5단계. ★중반 긴급 이벤트: 《빈 무덤의 반전》
+            5단계. 긴급 상황 발생 (새로운 국면)
           </h2>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
@@ -150,7 +150,7 @@ export default function TabStoryEnding({
         {!room.gate1Unlocked ? (
           <div className="space-y-2.5">
             <p className="text-xs text-stone-300 leading-relaxed">
-              4단계 전반전 밀담(20분)이 종료된 후, 진행자가 안내하는 <b>관문 1 해금 암호</b>를 입력하면 중반 반전 시트와 2차 조사 구역(빈 무덤·외곽 폐광)이 열립니다.
+              4단계 전반전 대화와 밀담(20분)이 종료된 후, 진행자가 안내하는 <b>관문 1 해금 암호</b>를 입력하면 새로운 사건 대본과 2차 조사 구역이 열립니다.
             </p>
             <form
               onSubmit={async (e) => {
@@ -178,7 +178,7 @@ export default function TabStoryEnding({
                 type="submit"
                 className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-extrabold text-xs shrink-0"
               >
-                반전 해금
+                사건 해금
               </button>
             </form>
             {errGate1 && <p className="text-[11px] text-rose-400">{errGate1}</p>}
@@ -214,7 +214,7 @@ export default function TabStoryEnding({
             ) : (
               <Lock className="w-4 h-4 text-amber-400" />
             )}
-            9~12단계. ★1분 비밀 지목 & 행크 추격전 결판
+            9~12단계. 최후의 변론 및 최종 결판
           </h2>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
@@ -230,7 +230,7 @@ export default function TabStoryEnding({
         {!room.gate2Unlocked ? (
           <div className="space-y-2.5">
             <p className="text-xs text-stone-300 leading-relaxed">
-              8단계 최후 변론(7분)이 끝난 직후, 진행자가 안내하는 <b>관문 2 해금 암호</b>를 입력하면 <b>9단계(클라이브·그레이스 1분 비밀 지목)</b>와 <b>11~12단계(투표 수감 & 행크 추격전 주사위 합산기)</b>가 열립니다.
+              8단계 최후 변론(7분)이 끝난 직후, 진행자가 안내하는 <b>관문 2 해금 암호</b>를 입력하면 <b>최후의 비밀 지목 단계</b>와 <b>최종 투표 및 결판 단계</b>가 열립니다.
             </p>
             <form
               onSubmit={async (e) => {
@@ -572,7 +572,7 @@ export default function TabStoryEnding({
             ) : (
               <Lock className="w-4 h-4 text-amber-400" />
             )}
-            13단계. ★멀티 엔딩 북 (Ending A~G) & 진상 해설서
+            13단계. 캐릭터별 결말 (Ending A~G) & 진상 해설서
           </h2>
           <span
             className={`text-[10px] px-2 py-0.5 rounded font-bold ${
@@ -588,7 +588,7 @@ export default function TabStoryEnding({
         {!room.gate3Unlocked ? (
           <div className="space-y-2.5">
             <p className="text-xs text-stone-300 leading-relaxed">
-              12단계 행크 추격전이 모두 끝난 뒤, 진행자가 안내하는 <b>관문 3 해금 암호</b>를 입력하면 <b>비밀 지목 채점 결과, 멀티 엔딩 7종(Ending A~G), 사건의 전말 해설서</b>가 공개됩니다.
+              최종 결판이 모두 끝난 뒤, 진행자가 안내하는 <b>관문 3 해금 암호</b>를 입력하면 <b>비밀 지목 채점 결과, 캐릭터별 최종 결말(Ending A~G), 사건의 전말 해설서</b>가 공개됩니다.
             </p>
             <form
               onSubmit={async (e) => {

@@ -337,10 +337,10 @@ export default function TabClueMap({
           {!room.gate1Unlocked && (
             <div className="p-4 rounded-2xl bg-amber-950/25 border border-amber-700/60 space-y-2.5">
               <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
-                <Lock className="w-4 h-4" /> [🔒 관문 1 잠김] 5단계 《빈 무덤의 반전》 & 2차 조사 구역(6·7구역)
+                <Lock className="w-4 h-4" /> [🔒 관문 1 잠김] 5단계: 긴급 상황 발생 (새로운 국면) & 2차 조사 구역
               </div>
               <p className="text-[11px] text-stone-300 leading-relaxed">
-                1차 조사와 전반전 밀담(20분)이 모두 끝난 뒤, 진행자가 알려주는 <b>5단계 해금 암호</b>를 입력하면 신규 구역 2곳(<b>빈 무덤 3장, 외곽 폐광 4장</b>)이 열립니다.
+                1차 조사와 전반전 대화(20분)가 모두 끝난 뒤, 진행자가 알려주는 <b>5단계 해금 암호</b>를 입력하면 신규 조사 구역 2곳(총 7장)이 새롭게 열립니다.
               </p>
               <form onSubmit={handleUnlockGate1} className="flex gap-2 pt-1">
                 <div className="relative flex-1">
