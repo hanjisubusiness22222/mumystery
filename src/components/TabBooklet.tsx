@@ -305,7 +305,7 @@ export default function TabBooklet({
               <FileSignature className="w-4 h-4" /> [클라이브 전용] 사법거래 회유서 대상 지정
             </div>
             <p className="text-[11px] text-stone-300 leading-relaxed">
-              1:1 밀담에서 회유서를 건네 수락받은 주민 1명을 선택하면, 해당 플레이어의 스마트폰 설정집에 <b>[클라이브가 행크 사살 시 (+5점)]</b> 목표 변경이 즉시 연동됩니다.
+              1:1 밀담에서 회유서를 건네 수락받은 주민 1명을 선택하면, 해당 플레이어의 스마트폰 설정집에 <b>[클라이브 최종 승리 시 (+5점)]</b> 목표 변경이 즉시 연동됩니다.
             </p>
             <div className="flex flex-wrap gap-1.5 pt-1">
               {residentList.map((res) => {
