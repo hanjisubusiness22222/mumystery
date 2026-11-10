@@ -237,7 +237,7 @@ export default function TabBooklet({
             <FileSignature className="w-4 h-4" /> [사법거래 성립] 클라이브의 회유서를 수락했습니다!
           </div>
           <p className="text-xs leading-relaxed text-amber-100/90">
-            당신의 기존 5점 목표가 <b>[클라이브 최종 승리 시 (+5점)]</b>으로 변경되었습니다! 이제 본인이 최종 투표에서 유치장에 수감되더라도 후반전 최종 결판에서 클라이브가 승리하면 +5점을 획득합니다.
+            당신의 기존 5점 목표가 <b>[클라이브 최종 승리 시 (+5점)]</b>으로 변경되었습니다! 이제 본인이 최종 투표에서 유치장에 수감되더라도 {room.gate1Unlocked ? '후반전 최종 결판에서 클라이브가 승리하면' : '클라이브가 최종 승리를 거두면'} +5점을 획득합니다.
           </p>
         </div>
       )}
@@ -307,7 +307,9 @@ export default function TabBooklet({
               ? '🔄 [사법거래 대체] 클라이브가 최종 승리한다'
               : goal.title;
             const displayDesc = isReplacedByBribe
-              ? '클라이브의 사법거래 회유서를 수락하여 목표가 변경되었습니다! 후반전 최종 결판에서 클라이브가 주사위 1위로 승리하면 (내가 투표로 수감되더라도) +5점을 획득합니다!'
+              ? room.gate1Unlocked
+                ? '클라이브의 사법거래 회유서를 수락하여 목표가 변경되었습니다! 후반전 최종 결판에서 클라이브가 주사위 1위로 승리하면 (내가 투표로 수감되더라도) +5점을 획득합니다!'
+                : '클라이브의 사법거래 회유서를 수락하여 목표가 변경되었습니다! 본인이 최종 투표에서 유치장에 수감되더라도 클라이브가 최종 승리를 거두면 +5점을 획득합니다!'
               : goal.description;
 
             const isChecked = !!checkedGoals[goal.id];
@@ -425,17 +427,28 @@ export default function TabBooklet({
           </div>
         )}
 
-        {/* 고유 패시브 표시 (클라이브) */}
+        {/* 고유 패시브 표시 (클라이브 - 긴급 상황 발생 전에는 후반전 결판 스포일러 방지) */}
         {character.passives && (
           <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-2">
-            <h3 className="text-xs font-bold text-amber-300">
-              ⚡ {character.passives.title}
-            </h3>
-            <ul className="space-y-1.5 text-xs text-stone-300 list-disc pl-4 leading-relaxed">
-              {character.passives.items.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
-            </ul>
+            {room.gate1Unlocked ? (
+              <>
+                <h3 className="text-xs font-bold text-amber-300">
+                  ⚡ {character.passives.title}
+                </h3>
+                <ul className="space-y-1.5 text-xs text-stone-300 list-disc pl-4 leading-relaxed">
+                  {character.passives.items.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <div className="flex items-center gap-2 text-xs text-stone-400">
+                <Lock className="w-4 h-4 text-amber-600/70 shrink-0" />
+                <span>
+                  <b className="text-amber-300/90">고유 패시브 : [전설적인 총잡이]</b> — 새로운 사건 발생 후 상세 효과가 공개됩니다.
+                </span>
+              </div>
+            )}
           </div>
         )}
       </section>

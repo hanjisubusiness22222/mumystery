@@ -221,7 +221,16 @@ export default function TabStoryEnding({
         {!room.gate2Unlocked ? (
           <div className="space-y-3 py-1">
             <p className="text-xs text-stone-300 leading-relaxed">
-              최후 변론이 끝난 직후, 마스터(진행자)가 결판을 해금하면 <b>최후의 비밀 지목</b>과 <b>최종 투표 및 결판</b>이 열립니다.
+              최후 변론이 끝난 직후, 마스터(진행자)가 결판을 해금하면{' '}
+              {character.id === 'gm' || character.id === 'clive' || character.id === 'grace' ? (
+                <>
+                  <b>최후의 비밀 지목</b>과 <b>최종 투표 및 결판</b>이 열립니다.
+                </>
+              ) : (
+                <>
+                  <b>행동 스킬 선언</b>과 <b>최종 투표 및 결판</b>이 열립니다.
+                </>
+              )}
             </p>
             {character.id === 'gm' ? (
               <button
@@ -238,7 +247,8 @@ export default function TabStoryEnding({
           </div>
         ) : (
           <div className="space-y-5">
-            {/* 최후 변론 직후 비밀 지목 (1회 확정 + 마스터 재설정) */}
+            {/* 최후 변론 직후 비밀 지목 (마스터·클라이브·그레이스에게만 노출 — 타 플레이어 스포일러 방지) */}
+            {(character.id === 'gm' || character.id === 'clive' || character.id === 'grace') && (
             <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-700/50 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
@@ -249,6 +259,7 @@ export default function TabStoryEnding({
                 </span>
               </div>
 
+              {character.id === 'gm' && (
               <div className="flex gap-2 text-[11px]">
                 <div
                   className={`flex-1 p-2 rounded-lg border text-center font-semibold flex flex-col items-center justify-center gap-1 ${
@@ -299,6 +310,7 @@ export default function TabStoryEnding({
                   )}
                 </div>
               </div>
+              )}
 
               {/* 클라이브 본인에게만 보이는 조력자 지목 UI (1회 확정) */}
               {character.id === 'clive' && (
@@ -390,8 +402,10 @@ export default function TabStoryEnding({
                 </div>
               )}
             </div>
+            )}
 
-            {/* 행동 스킬 발동 체크판 */}
+            {/* 행동 스킬 발동 체크판 (마스터 전용 — 타 캐릭터 스킬 사전 노출 방지) */}
+            {character.id === 'gm' && (
             <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-2.5">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
@@ -467,6 +481,7 @@ export default function TabStoryEnding({
                 })}
               </div>
             </div>
+            )}
 
             {/* 최종 투표 유치장 수감자 지정 (마스터 전용) & 클라이브 탈옥 주사위 */}
             <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-3">
@@ -615,7 +630,9 @@ export default function TabStoryEnding({
                               [{c.initial}] {c.name.split(' ')[0]}
                             </span>
                             <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded bg-stone-800 text-amber-300">
-                              보너스 +{bonus}
+                              {character.id === 'gm' || character.id === c.id || diceVal !== null
+                                ? `보너스 +${bonus}`
+                                : '보너스 비공개'}
                             </span>
                           </div>
                         </div>

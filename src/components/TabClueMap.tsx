@@ -158,7 +158,7 @@ export default function TabClueMap({
                     {currentTurn.roundLabel}
                   </span>
                   <span className="font-mono text-stone-400 bg-stone-950 px-2.5 py-0.5 rounded-full border border-stone-800 text-[11px]">
-                    진행: <b className="text-amber-300">{acquiredCount + 1}</b> / 24번째 픽
+                    진행: <b className="text-amber-300">{acquiredCount + 1}</b> / {room.gate1Unlocked ? '24번째 픽' : '14번째 픽 (1차)'}
                   </span>
                 </div>
 
@@ -279,17 +279,19 @@ export default function TabClueMap({
                   </p>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-stone-950/80 border border-stone-800 space-y-1">
-                  <div className="font-bold text-amber-300">
-                    ② [2차 추가 조사] — 역순 시작 (신규 구역 7장 + 1차 잔여 3장 = 총 10장)
+                {(room.gate1Unlocked || isGM) && (
+                  <div className="p-2.5 rounded-xl bg-stone-950/80 border border-stone-800 space-y-1">
+                    <div className="font-bold text-amber-300">
+                      ② [2차 추가 조사] — 역순 시작 (신규 구역 7장 + 1차 잔여 3장 = 총 10장)
+                    </div>
+                    <p>
+                      • <b>1바퀴째 (첫 1장)</b>: 1차 조사와 반대로 <b>⛪ 그레이스부터 반시계 방향</b>으로 1장씩 선택합니다 (마지막이 클라이브).
+                    </p>
+                    <p>
+                      • <b>남은 3장 처리</b>: <b>클라이브부터 시계 방향으로 3명(클라이브·애니·베니)</b>이 1장씩 추가 획득합니다.
+                    </p>
                   </div>
-                  <p>
-                    • <b>1바퀴째 (첫 1장)</b>: 1차 조사와 반대로 <b>⛪ 그레이스부터 반시계 방향</b>으로 1장씩 선택합니다 (마지막이 클라이브).
-                  </p>
-                  <p>
-                    • <b>남은 3장 처리</b>: <b>클라이브부터 시계 방향으로 3명(클라이브·애니·베니)</b>이 1장씩 추가 획득합니다.
-                  </p>
-                </div>
+                )}
               </div>
             )}
           </div>

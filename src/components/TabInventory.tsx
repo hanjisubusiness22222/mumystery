@@ -296,10 +296,16 @@ export default function TabInventory({
                           className={`text-[10px] px-1.5 py-0.5 rounded font-semibold shrink-0 ${
                             c.faction === 'kill_subdue'
                               ? 'bg-rose-950 text-rose-300 border border-rose-800/60'
-                              : 'bg-teal-950 text-teal-300 border border-teal-800/60'
+                              : c.faction === 'survival'
+                              ? 'bg-teal-950 text-teal-300 border border-teal-800/60'
+                              : 'bg-stone-800 text-stone-300 border border-stone-700'
                           }`}
                         >
-                          {c.faction === 'kill_subdue' ? '💥 사살·제압파' : '🛡️ 생존파'}
+                          {c.faction === 'kill_subdue'
+                            ? '💥 사살·제압파'
+                            : c.faction === 'survival'
+                            ? '🛡️ 생존파'
+                            : '⚖️ 중립'}
                         </span>
                       </div>
                     </div>
