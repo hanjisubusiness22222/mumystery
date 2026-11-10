@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { CharacterId, RoomState } from '@/types/game';
+import { ActionSkillActor, CharacterId, RoomState, SkillStatus } from '@/types/game';
 import { CLUE_CARDS } from '@/data/cards';
 
 // Vercel serverless writable path
@@ -29,9 +29,11 @@ function createInitialRoom(roomCode: string): RoomState {
     bribedResident: null,
     cliveSecretPick: null,
     graceSecretPick: null,
+    skillStatus: {},
     jailedCharacter: null,
     cliveEscapeRoll: null,
     chaseDiceRolls: {},
+    playerScores: {},
     updatedAt: Date.now()
   };
 }
@@ -176,6 +178,22 @@ export async function POST(req: NextRequest) {
         } else {
           room.chaseDiceRolls[characterId] = Number(value);
         }
+        break;
+      }
+
+      case 'set_skill_status': {
+        const actor = body.actor as ActionSkillActor;
+        const status = body.status as SkillStatus;
+        if (!room.skillStatus) room.skillStatus = {};
+        room.skillStatus[actor] = status;
+        break;
+      }
+
+      case 'set_player_score': {
+        const characterId = body.characterId as CharacterId;
+        const score = Number(body.score);
+        if (!room.playerScores) room.playerScores = {};
+        room.playerScores[characterId] = score;
         break;
       }
 

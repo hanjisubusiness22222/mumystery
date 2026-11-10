@@ -9,7 +9,13 @@ import {
 } from '@/data/scripts';
 import { CHARACTERS, CHARACTER_MAP } from '@/data/characters';
 import { CLUE_CARDS } from '@/data/cards';
-import { CharacterData, CharacterId, RoomState } from '@/types/game';
+import {
+  ActionSkillActor,
+  CharacterData,
+  CharacterId,
+  RoomState,
+  SkillStatus
+} from '@/types/game';
 import {
   Film,
   Lock,
@@ -20,7 +26,9 @@ import {
   CheckCircle2,
   AlertCircle,
   BookOpen,
-  Crosshair
+  Crosshair,
+  Zap,
+  Crown
 } from 'lucide-react';
 
 interface TabStoryEndingProps {
@@ -30,11 +38,13 @@ interface TabStoryEndingProps {
   onUnlockGate: (gate: 0 | 1 | 2 | 3) => Promise<boolean>;
   onSubmitSecretPick: (
     actor: 'clive' | 'grace',
-    targetId: CharacterId
+    targetId: CharacterId | null
   ) => void;
   onSetJailed: (charId: CharacterId | null) => void;
   onRollCliveEscape: (val: number | null) => void;
   onSetChaseDice: (charId: CharacterId, val: number | null) => void;
+  onSetSkillStatus?: (actor: ActionSkillActor, status: SkillStatus) => void;
+  onSetPlayerScore?: (characterId: CharacterId, score: number) => void;
   onResetRoom?: () => void;
 }
 
@@ -47,6 +57,8 @@ export default function TabStoryEnding({
   onSetJailed,
   onRollCliveEscape,
   onSetChaseDice,
+  onSetSkillStatus,
+  onSetPlayerScore,
   onResetRoom
 }: TabStoryEndingProps) {
 
@@ -226,139 +238,284 @@ export default function TabStoryEnding({
           </div>
         ) : (
           <div className="space-y-5">
-            {/* 9단계: 1분 비밀 지목 (최후 변론 직후 / 행동 단계 전) */}
+            {/* 최후 변론 직후 비밀 지목 (1회 확정 + 마스터 재설정) */}
             <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-700/50 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
                   <Crosshair className="w-4 h-4 text-amber-400" /> 최후 변론 직후 비밀 지목
                 </h3>
                 <span className="text-[10px] text-stone-400">
-                  행동 단계 돌입 전 실시
+                  1회 확정 · 행동 전 실시
                 </span>
               </div>
 
               <div className="flex gap-2 text-[11px]">
-                <span
-                  className={`flex-1 p-2 rounded-lg border text-center font-semibold ${
+                <div
+                  className={`flex-1 p-2 rounded-lg border text-center font-semibold flex flex-col items-center justify-center gap-1 ${
                     room.cliveSecretPick
                       ? 'bg-emerald-950/50 border-emerald-700 text-emerald-300'
                       : 'bg-stone-900 border-stone-800 text-stone-400'
                   }`}
                 >
-                  ⭐ 클라이브(조력자 지목):{' '}
-                  {room.cliveSecretPick ? '제출 완료 ✓' : '대기 중...'}
-                </span>
-                <span
-                  className={`flex-1 p-2 rounded-lg border text-center font-semibold ${
+                  <span>
+                    ⭐ 클라이브(조력자):{' '}
+                    {room.cliveSecretPick ? '제출 완료 ✓' : '대기 중...'}
+                  </span>
+                  {character.id === 'gm' && room.cliveSecretPick && (
+                    <button
+                      onClick={() => {
+                        if (window.confirm('클라이브의 비밀 지목을 초기화하고 다시 선택하게 하시겠습니까?')) {
+                          onSubmitSecretPick('clive', null);
+                        }
+                      }}
+                      className="px-2 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 text-[10px]"
+                    >
+                      마스터 재설정
+                    </button>
+                  )}
+                </div>
+                <div
+                  className={`flex-1 p-2 rounded-lg border text-center font-semibold flex flex-col items-center justify-center gap-1 ${
                     room.graceSecretPick
                       ? 'bg-emerald-950/50 border-emerald-700 text-emerald-300'
                       : 'bg-stone-900 border-stone-800 text-stone-400'
                   }`}
                 >
-                  ⛪ 그레이스(매드독 지목):{' '}
-                  {room.graceSecretPick ? '제출 완료 ✓' : '대기 중...'}
-                </span>
+                  <span>
+                    ⛪ 그레이스(매드독):{' '}
+                    {room.graceSecretPick ? '제출 완료 ✓' : '대기 중...'}
+                  </span>
+                  {character.id === 'gm' && room.graceSecretPick && (
+                    <button
+                      onClick={() => {
+                        if (window.confirm('그레이스의 비밀 지목을 초기화하고 다시 선택하게 하시겠습니까?')) {
+                          onSubmitSecretPick('grace', null);
+                        }
+                      }}
+                      className="px-2 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 text-[10px]"
+                    >
+                      마스터 재설정
+                    </button>
+                  )}
+                </div>
               </div>
 
-              {/* 클라이브 본인에게만 보이는 조력자 지목 UI */}
+              {/* 클라이브 본인에게만 보이는 조력자 지목 UI (1회 확정) */}
               {character.id === 'clive' && (
                 <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-600/60 space-y-2">
                   <div className="text-xs font-bold text-amber-200">
                     🔫 [클라이브 전용] 행크의 조력자(+2점 목표) 비밀 지목
                   </div>
-                  <p className="text-[11px] text-stone-300">
-                    마을 주민 중 행크를 돕고 있는 조력자로 의심되는 1명을 선택하세요. 적중 시 클라이브 +2점 획득 & 해당 조력자의 은폐 점수(+2점)를 0점으로 삭감합니다!
-                  </p>
-                  <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    {activeChars
-                      .filter((c) => c.id !== 'clive')
-                      .map((target) => {
-                        const isPicked = room.cliveSecretPick === target.id;
-                        return (
-                          <button
-                            key={target.id}
-                            onClick={() =>
-                              onSubmitSecretPick('clive', target.id)
-                            }
-                            className={`p-2 rounded-lg text-xs font-bold border text-left transition ${
-                              isPicked
-                                ? 'bg-amber-600 border-amber-400 text-stone-950'
-                                : 'bg-stone-900 border-stone-700 text-stone-200'
-                            }`}
-                          >
-                            {target.emoji} {target.name.split(' ')[0]}{' '}
-                            {isPicked ? '✓' : ''}
-                          </button>
-                        );
-                      })}
-                  </div>
+                  {room.cliveSecretPick ? (
+                    <div className="p-2.5 rounded-lg bg-emerald-950/70 border border-emerald-600/70 text-xs font-bold text-emerald-300 flex items-center justify-between">
+                      <span>
+                        ✓ 지목 확정 완료: {CHARACTER_MAP[room.cliveSecretPick]?.emoji}{' '}
+                        {CHARACTER_MAP[room.cliveSecretPick]?.name}
+                      </span>
+                      <span className="text-[10px] text-stone-400">변경 불가</span>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-[11px] text-stone-300">
+                        마을 주민 중 행크를 돕고 있는 조력자로 의심되는 1명을 선택하세요. <b>한 번 선택하면 변경할 수 없습니다.</b>
+                      </p>
+                      <div className="grid grid-cols-2 gap-1.5 pt-1">
+                        {activeChars
+                          .filter((c) => c.id !== 'clive')
+                          .map((target) => (
+                            <button
+                              key={target.id}
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    `[${target.name}]님을 행크의 조력자로 최종 지목하시겠습니까? (확정 후 변경 불가)`
+                                  )
+                                ) {
+                                  onSubmitSecretPick('clive', target.id);
+                                }
+                              }}
+                              className="p-2 rounded-lg text-xs font-bold border text-left bg-stone-900 hover:bg-amber-950/50 border-stone-700 hover:border-amber-500 text-stone-200 transition"
+                            >
+                              {target.emoji} {target.name.split(' ')[0]}
+                            </button>
+                          ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
-              {/* 그레이스 본인에게만 보이는 매드독 지목 UI */}
+              {/* 그레이스 본인에게만 보이는 매드독 지목 UI (1회 확정) */}
               {character.id === 'grace' && (
                 <div className="p-3 rounded-lg bg-purple-950/30 border border-purple-500/60 space-y-2">
                   <div className="text-xs font-bold text-purple-200">
                     ⛪ [그레이스 전용] &lsquo;매드독&rsquo;의 정체(+3점 목표) 비밀 지목
                   </div>
-                  <p className="text-[11px] text-stone-300">
-                    10년 전 매드독 갱단을 몰살한 두목 &lsquo;매드독&rsquo;으로 의심되는 인물 1명을 선택하세요. (선택 내역은 최종 결말 해금 전까지 비공개됩니다)
-                  </p>
-                  <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    {activeChars
-                      .filter((c) => c.id !== 'grace')
-                      .map((target) => {
-                        const isPicked = room.graceSecretPick === target.id;
-                        return (
-                          <button
-                            key={target.id}
-                            onClick={() =>
-                              onSubmitSecretPick('grace', target.id)
-                            }
-                            className={`p-2 rounded-lg text-xs font-bold border text-left transition ${
-                              isPicked
-                                ? 'bg-purple-500 border-purple-300 text-stone-950'
-                                : 'bg-stone-900 border-stone-700 text-stone-200'
-                            }`}
-                          >
-                            {target.emoji} {target.name.split(' ')[0]}{' '}
-                            {isPicked ? '✓' : ''}
-                          </button>
-                        );
-                      })}
-                  </div>
+                  {room.graceSecretPick ? (
+                    <div className="p-2.5 rounded-lg bg-emerald-950/70 border border-emerald-600/70 text-xs font-bold text-emerald-300 flex items-center justify-between">
+                      <span>
+                        ✓ 지목 확정 완료: {CHARACTER_MAP[room.graceSecretPick]?.emoji}{' '}
+                        {CHARACTER_MAP[room.graceSecretPick]?.name}
+                      </span>
+                      <span className="text-[10px] text-stone-400">변경 불가</span>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-[11px] text-stone-300">
+                        두목 &lsquo;매드독&rsquo;으로 의심되는 인물 1명을 선택하세요. <b>한 번 선택하면 변경할 수 없습니다.</b> (결말 해금 전까지 비공개)
+                      </p>
+                      <div className="grid grid-cols-2 gap-1.5 pt-1">
+                        {activeChars
+                          .filter((c) => c.id !== 'grace')
+                          .map((target) => (
+                            <button
+                              key={target.id}
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    `[${target.name}]님을 매드독의 정체로 최종 지목하시겠습니까? (확정 후 변경 불가)`
+                                  )
+                                ) {
+                                  onSubmitSecretPick('grace', target.id);
+                                }
+                              }}
+                              className="p-2 rounded-lg text-xs font-bold border text-left bg-stone-900 hover:bg-purple-950/50 border-stone-700 hover:border-purple-400 text-stone-200 transition"
+                            >
+                              {target.emoji} {target.name.split(' ')[0]}
+                            </button>
+                          ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* 11단계: 최종 투표 유치장 수감자 지정 & 클라이브 탈옥 주사위 */}
-            <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-3">
-              <h3 className="text-xs font-bold text-amber-300">
-                ⛓️ 최종 투표 최다 득표자 (유치장 수감 1인)
-              </h3>
-              <p className="text-[11px] text-stone-400">
-                투표 결과 최다 득표로 유치장에 수감된 인물 1명을 선택하세요. 수감자는 최종 결판에 참여할 수 없습니다.
-              </p>
+            {/* 행동 스킬 발동 체크판 */}
+            <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                  <Zap className="w-4 h-4 text-amber-400" /> 행동 스킬 발동 순서 체크
+                </h3>
+                <span className="text-[10px] text-stone-400">
+                  {character.id === 'gm' ? '마스터 진행 기록' : '실시간 진행 현황'}
+                </span>
+              </div>
 
-              <div className="flex flex-wrap gap-1.5">
-                {activeChars.map((c) => {
-                  const isJailed = room.jailedCharacter === c.id;
+              <div className="space-y-1.5 text-[11px]">
+                {(
+                  [
+                    { actor: 'clive', label: '1번 · 🔫 클라이브 (총구 겨누기)', desc: '대상 1명 투표권 박탈 & 도주 봉인' },
+                    { actor: 'annie', label: '2번 · 🍷 애니 (수면제)', desc: '대상 1명 특수 능력 영구 봉인' },
+                    { actor: 'david', label: '3번 · ⭐ 데이비드 (아이템 압수)', desc: '타인 아이템 1개 압수 (소지품에서 이동)' },
+                    { actor: 'florence', label: '4번 · 💉 플로렌스 (현장 도주)', desc: '최종 투표 유치장 수감 면제' },
+                    { actor: 'grace', label: '방어 · ⛪ 그레이스 (은빛 십자가)', desc: '공격 1회 즉시 방어' }
+                  ] as const
+                ).map((sk) => {
+                  const status = room.skillStatus?.[sk.actor] || 'pending';
                   return (
-                    <button
-                      key={c.id}
-                      onClick={() => onSetJailed(isJailed ? null : c.id)}
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition ${
-                        isJailed
-                          ? 'bg-rose-700 border-rose-400 text-white'
-                          : 'bg-stone-900 border-stone-700 text-stone-300'
-                      }`}
+                    <div
+                      key={sk.actor}
+                      className="p-2 rounded-lg bg-stone-900/90 border border-stone-800 flex items-center justify-between gap-2"
                     >
-                      {c.emoji} {c.name.split(' ')[0]}{' '}
-                      {isJailed ? '(수감됨 ⛓️)' : ''}
-                    </button>
+                      <div className="min-w-0">
+                        <div className="font-bold text-stone-200 truncate">{sk.label}</div>
+                        <div className="text-[10px] text-stone-400 truncate">{sk.desc}</div>
+                      </div>
+                      {character.id === 'gm' && onSetSkillStatus ? (
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() =>
+                              onSetSkillStatus(sk.actor, status === 'used' ? 'pending' : 'used')
+                            }
+                            className={`px-2 py-1 rounded text-[10px] font-bold border transition ${
+                              status === 'used'
+                                ? 'bg-emerald-950 text-emerald-300 border-emerald-600'
+                                : 'bg-stone-950 text-stone-400 border-stone-700 hover:border-emerald-600'
+                            }`}
+                          >
+                            {status === 'used' ? '발동 ✓' : '완료'}
+                          </button>
+                          <button
+                            onClick={() =>
+                              onSetSkillStatus(sk.actor, status === 'blocked' ? 'pending' : 'blocked')
+                            }
+                            className={`px-2 py-1 rounded text-[10px] font-bold border transition ${
+                              status === 'blocked'
+                                ? 'bg-rose-950 text-rose-300 border-rose-600'
+                                : 'bg-stone-950 text-stone-400 border-stone-700 hover:border-rose-600'
+                            }`}
+                          >
+                            {status === 'blocked' ? '봉인 ✕' : '봉인'}
+                          </button>
+                        </div>
+                      ) : (
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 border ${
+                            status === 'used'
+                              ? 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                              : status === 'blocked'
+                              ? 'bg-rose-950 text-rose-300 border-rose-700'
+                              : 'bg-stone-950 text-stone-500 border-stone-800'
+                          }`}
+                        >
+                          {status === 'used' ? '발동 완료 ✓' : status === 'blocked' ? '봉인/무효' : '대기'}
+                        </span>
+                      )}
+                    </div>
                   );
                 })}
               </div>
+            </div>
+
+            {/* 최종 투표 유치장 수감자 지정 (마스터 전용) & 클라이브 탈옥 주사위 */}
+            <div className="p-3.5 rounded-xl bg-stone-950 border border-stone-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-amber-300">
+                  ⛓️ 최종 투표 최다 득표자 (유치장 수감 1인)
+                </h3>
+                <span className="text-[10px] text-stone-400">
+                  {character.id === 'gm' ? '마스터 전용 확정' : '마스터 확정 대기'}
+                </span>
+              </div>
+              <p className="text-[11px] text-stone-400">
+                투표 결과 최다 득표로 유치장에 수감된 인물 1명입니다. 수감자는 최종 결판에 참여할 수 없습니다.
+              </p>
+
+              {character.id === 'gm' ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {activeChars.map((c) => {
+                    const isJailed = room.jailedCharacter === c.id;
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => onSetJailed(isJailed ? null : c.id)}
+                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition ${
+                          isJailed
+                            ? 'bg-rose-700 border-rose-400 text-white'
+                            : 'bg-stone-900 border-stone-700 text-stone-300 hover:border-amber-500'
+                        }`}
+                      >
+                        {c.emoji} {c.name.split(' ')[0]}{' '}
+                        {isJailed ? '(수감됨 ⛓️)' : ''}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-2.5 rounded-lg bg-stone-900 border border-stone-800 text-xs font-bold text-center">
+                  {room.jailedCharacter ? (
+                    <span className="text-rose-300">
+                      ⛓️ 최종 수감 확정: {CHARACTER_MAP[room.jailedCharacter]?.emoji}{' '}
+                      {CHARACTER_MAP[room.jailedCharacter]?.name}
+                    </span>
+                  ) : (
+                    <span className="text-stone-400 font-normal">
+                      ⏳ 마스터가 최종 투표 결과에 따라 수감자를 확정 중입니다... (수감자 없음 포함)
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* 클라이브 수감 시: 4 이상 탈옥 주사위 판정기 */}
               {room.jailedCharacter === 'clive' && (
@@ -652,6 +809,138 @@ export default function TabStoryEnding({
               </div>
             </div>
 
+            {/* 7인 최종 점수 집계 & 1위 엔딩 판정기 */}
+            {(() => {
+              const scoreEntries = activeChars.map((c) => {
+                const score = room.playerScores?.[c.id] ?? 0;
+                const chase = chaseResults.find((r) => r.char.id === c.id);
+                const chaseTotal = chase?.total ?? -1;
+                return { char: c, score, chaseTotal };
+              });
+              const sorted = [...scoreEntries].sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return b.chaseTotal - a.chaseTotal;
+              });
+              const maxScore = sorted[0]?.score ?? 0;
+              const topScorers = sorted.filter((e) => e.score === maxScore);
+              const hasScores = maxScore > 0;
+
+              let recommendedId: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'AB' =
+                (sorted[0]?.char.initial as 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G') || 'C';
+              let winnerLabel = `${sorted[0]?.char.emoji} ${sorted[0]?.char.name} (${maxScore}점)`;
+
+              if (
+                hasScores &&
+                topScorers.length === 2 &&
+                topScorers.some((e) => e.char.id === 'annie') &&
+                topScorers.some((e) => e.char.id === 'benny')
+              ) {
+                recommendedId = 'AB';
+                winnerLabel = `🍷🎹 애니 & 베니 공동 1위 (${maxScore}점 · Ending A+B 연속 낭독)`;
+              } else if (hasScores && topScorers.length > 1) {
+                winnerLabel = `${sorted[0]?.char.emoji} ${sorted[0]?.char.name} (${maxScore}점 · 추격전 우선)`;
+              }
+
+              return (
+                <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-600/60 space-y-3 text-xs">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-bold text-amber-300 flex items-center gap-1.5">
+                      <Crown className="w-4 h-4 text-amber-400" /> 7인 최종 점수 정산표
+                    </h3>
+                    <span className="text-[10px] text-stone-400">
+                      {character.id === 'gm'
+                        ? '설정집 체크 자동 반영 · 마스터 조정'
+                        : '각 캐릭터 최종 점수 현황'}
+                    </span>
+                  </div>
+
+                  {hasScores && (
+                    <div className="p-2.5 rounded-lg bg-amber-950/50 border border-amber-500/70 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="text-[10px] text-amber-300 font-semibold">
+                          🏆 현재 최종 1위 엔딩 추천
+                        </div>
+                        <div className="text-xs font-extrabold text-amber-100 truncate">
+                          {winnerLabel}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setSelectedEndingId(recommendedId)}
+                        className="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-[11px] shrink-0 shadow"
+                      >
+                        Ending {recommendedId} 보기
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    {sorted.map((entry, idx) => {
+                      const isWinner = hasScores && idx === 0;
+                      return (
+                        <div
+                          key={entry.char.id}
+                          className={`p-2 rounded-lg border flex items-center justify-between gap-2 ${
+                            isWinner
+                              ? 'bg-amber-950/35 border-amber-500/70'
+                              : 'bg-stone-900 border-stone-800'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-[11px] font-mono text-stone-500 w-4 text-center shrink-0">
+                              {idx + 1}
+                            </span>
+                            <span className="text-base shrink-0">{entry.char.emoji}</span>
+                            <div className="min-w-0">
+                              <div className="font-bold text-stone-100 truncate">
+                                [{entry.char.initial}] {entry.char.name.split(' ')[0]}
+                              </div>
+                              <div className="text-[10px] text-stone-400">
+                                {entry.chaseTotal >= 0
+                                  ? `추격전 최종 ${entry.chaseTotal}`
+                                  : '추격전 불참/미입력'}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {character.id === 'gm' && onSetPlayerScore && (
+                              <button
+                                onClick={() =>
+                                  onSetPlayerScore(
+                                    entry.char.id,
+                                    Math.max(0, entry.score - 1)
+                                  )
+                                }
+                                className="w-6 h-6 rounded bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold"
+                              >
+                                -
+                              </button>
+                            )}
+                            <span className="min-w-[42px] text-center font-extrabold text-amber-300 text-xs">
+                              {entry.score}점
+                            </span>
+                            {character.id === 'gm' && onSetPlayerScore && (
+                              <button
+                                onClick={() =>
+                                  onSetPlayerScore(
+                                    entry.char.id,
+                                    Math.min(20, entry.score + 1)
+                                  )
+                                }
+                                className="w-6 h-6 rounded bg-stone-800 hover:bg-stone-700 text-stone-200 font-bold"
+                              >
+                                +
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* 엔딩 선택 탭 (Ending A ~ G + 애니&베니 공동 1등) */}
             <div className="space-y-3">
               <div className="text-xs text-stone-300 leading-relaxed bg-amber-950/20 p-3 rounded-xl border border-amber-800/40">
@@ -768,8 +1057,8 @@ export default function TabStoryEnding({
                 </div>
               )}
 
-              {/* 새 게임을 위한 방 전체 초기화 버튼 */}
-              {onResetRoom && (
+              {/* 새 게임을 위한 방 전체 초기화 버튼 (마스터 전용) */}
+              {character.id === 'gm' && onResetRoom && (
                 <div className="pt-4 border-t border-stone-800/80 text-center">
                   <button
                     onClick={() => {
@@ -783,7 +1072,7 @@ export default function TabStoryEnding({
                     }}
                     className="w-full py-3 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800/70 text-rose-200 text-xs font-bold transition shadow"
                   >
-                    🔄 게임 종료: 새 게임을 위해 방 전체 초기화하기
+                    🔄 [마스터 전용] 게임 종료: 새 게임을 위해 방 전체 초기화하기
                   </button>
                   <p className="text-[11px] text-stone-500 mt-1.5">
                     초기화 시 모든 단서 및 해금 상태가 리셋되며 메인 로비로 이동합니다.

@@ -92,6 +92,9 @@ export interface TimetableStep {
   gateNumber?: 0 | 1 | 2 | 3;
 }
 
+export type ActionSkillActor = 'clive' | 'annie' | 'david' | 'florence' | 'grace';
+export type SkillStatus = 'pending' | 'used' | 'blocked';
+
 export interface RoomState {
   roomCode: string;
   scenarioId?: string; // 확장형 멀티 시나리오 식별자 (기본값: 'new-frontier')
@@ -108,10 +111,14 @@ export interface RoomState {
   // 최후 변론 직후 비밀 지목
   cliveSecretPick: CharacterId | null; // 행크의 조력자 지목 (플로렌스 or 그레이스 정답)
   graceSecretPick: CharacterId | null; // 매드독 지목 (클라이브 정답)
+  // 행동 스킬 발동 상태 체크
+  skillStatus?: Partial<Record<ActionSkillActor, SkillStatus>>;
   // 최종 투표 유치장 수감자
   jailedCharacter: CharacterId | null;
   cliveEscapeRoll: number | null; // 클라이브 수감 시 탈옥 주사위 (4 이상 탈옥 성공)
   // 최후의 결판: 행크 추격전 주사위 눈금 (1~6)
   chaseDiceRolls: Partial<Record<CharacterId, number>>;
+  // 플레이어별 목표 점수 (설정집 체크 연동 & 마스터 최종 정산)
+  playerScores?: Partial<Record<CharacterId, number>>;
   updatedAt: number;
 }

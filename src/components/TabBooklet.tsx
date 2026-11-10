@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CHARACTERS, CHARACTER_MAP } from '@/data/characters';
 import { GM_TIMETABLE_GUIDE } from '@/data/timetable';
 import { CharacterData, CharacterId, CharacterSkill, RoomState } from '@/types/game';
@@ -20,23 +20,54 @@ interface TabBookletProps {
   room: RoomState;
   onSetBribe: (residentId: CharacterId | null) => void;
   onUnlockGate?: (gate: 0 | 1 | 2 | 3) => Promise<boolean>;
+  onUpdatePlayerScore?: (characterId: CharacterId, score: number) => void;
 }
 
 export default function TabBooklet({
   character,
   room,
   onSetBribe,
-  onUnlockGate
+  onUnlockGate,
+  onUpdatePlayerScore
 }: TabBookletProps) {
   const [checkedGoals, setCheckedGoals] = useState<Record<string, boolean>>({});
   const [fullscreenSkill, setFullscreenSkill] = useState<CharacterSkill | null>(
     null
   );
 
+  const goalsStorageKey = `nf_goals_${room.roomCode}_${character.id}`;
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(goalsStorageKey);
+      if (saved) {
+        setCheckedGoals(JSON.parse(saved));
+      } else {
+        setCheckedGoals({});
+      }
+    } catch {
+      setCheckedGoals({});
+    }
+  }, [goalsStorageKey]);
+
   const isBribedByClive = room.bribedResident === character.id;
 
   const toggleGoal = (goalId: string) => {
-    setCheckedGoals((prev) => ({ ...prev, [goalId]: !prev[goalId] }));
+    setCheckedGoals((prev) => {
+      const next = { ...prev, [goalId]: !prev[goalId] };
+      try {
+        localStorage.setItem(goalsStorageKey, JSON.stringify(next));
+      } catch {}
+      const nextPoints = character.goals.reduce((sum, g) => {
+        const isLocked = g.isHiddenUntilMidEvent && !room.gate1Unlocked;
+        if (isLocked) return sum;
+        return next[g.id] ? sum + g.points : sum;
+      }, 0);
+      if (onUpdatePlayerScore && character.id !== 'gm') {
+        onUpdatePlayerScore(character.id, nextPoints);
+      }
+      return next;
+    });
   };
 
   const totalCheckedPoints = character.goals.reduce((sum, g) => {

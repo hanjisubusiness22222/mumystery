@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { CHARACTER_MAP } from '@/data/characters';
 import { CLUE_CARDS } from '@/data/cards';
-import { CharacterId, RoomState } from '@/types/game';
+import { ActionSkillActor, CharacterId, RoomState, SkillStatus } from '@/types/game';
 import { supabase } from '@/lib/supabase';
 import LobbyView from '@/components/LobbyView';
 import HeaderBar from '@/components/HeaderBar';
@@ -29,9 +29,11 @@ function createInitialLocalRoom(roomCode: string): RoomState {
     bribedResident: null,
     cliveSecretPick: null,
     graceSecretPick: null,
+    skillStatus: {},
     jailedCharacter: null,
     cliveEscapeRoll: null,
     chaseDiceRolls: {},
+    playerScores: {},
     updatedAt: Date.now()
   };
 }
@@ -199,15 +201,26 @@ export default function HomePage() {
           if (payload.new && (payload.new as { state?: RoomState }).state) {
             const remote = (payload.new as { state: RoomState }).state;
             setRoom((prev) => {
-              const merged: RoomState = {
-                ...remote,
-                gate0Unlocked: prev.gate0Unlocked || remote.gate0Unlocked,
-                gate1Unlocked: prev.gate1Unlocked || remote.gate1Unlocked,
-                gate2Unlocked: prev.gate2Unlocked || remote.gate2Unlocked,
-                gate3Unlocked: prev.gate3Unlocked || remote.gate3Unlocked,
-                cardOwners: { ...prev.cardOwners, ...remote.cardOwners },
-                chaseDiceRolls: { ...prev.chaseDiceRolls, ...remote.chaseDiceRolls }
-              };
+              const isRemoteReset =
+                !remote.gate0Unlocked &&
+                !remote.gate1Unlocked &&
+                !remote.gate2Unlocked &&
+                !remote.gate3Unlocked &&
+                Object.values(remote.cardOwners || {}).every((v) => v === null);
+
+              const merged: RoomState = isRemoteReset
+                ? remote
+                : {
+                    ...remote,
+                    gate0Unlocked: prev.gate0Unlocked || remote.gate0Unlocked,
+                    gate1Unlocked: prev.gate1Unlocked || remote.gate1Unlocked,
+                    gate2Unlocked: prev.gate2Unlocked || remote.gate2Unlocked,
+                    gate3Unlocked: prev.gate3Unlocked || remote.gate3Unlocked,
+                    cardOwners: remote.cardOwners || prev.cardOwners,
+                    chaseDiceRolls: remote.chaseDiceRolls || {},
+                    skillStatus: remote.skillStatus || {},
+                    playerScores: remote.playerScores || {}
+                  };
               try {
                 localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(merged));
               } catch {}
@@ -223,59 +236,11 @@ export default function HomePage() {
     };
   }, [roomCode]);
 
-  // 공통 액션 호출 헬퍼 (낙관적 즉시 업데이트 + 영구 보존)
+  // 공통 액션 호출 헬퍼 (모든 액션 낙관적 즉시 반영 + Supabase 실시간 동기화)
   const dispatchRoomAction = async (
     action: string,
     payload: Record<string, unknown> = {}
   ): Promise<{ ok: boolean; error?: string }> => {
-    // 1. 관문 해금인 경우 로컬 및 Supabase에 즉시 반영
-    if (action === 'unlock_gate') {
-      const gate = Number(payload.gate);
-      setRoom((prev) => {
-        const next: RoomState = {
-          ...prev,
-          gate0Unlocked: gate === 0 || gate === 1 ? true : prev.gate0Unlocked,
-          gate1Unlocked: gate === 1 ? true : prev.gate1Unlocked,
-          gate2Unlocked: gate === 2 ? true : prev.gate2Unlocked,
-          gate3Unlocked: gate === 3 ? true : prev.gate3Unlocked
-        };
-        try {
-          localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(next));
-        } catch {}
-        syncToSupabase(next);
-        return next;
-      });
-      return { ok: true };
-    }
-
-    // 카드 획득/양도/회수인 경우 즉시 로컬 반영 및 Supabase 동기화 (초고속 실시간 반응)
-    if (
-      action === 'acquire_card' ||
-      action === 'transfer_card' ||
-      action === 'return_card'
-    ) {
-      const cardId = String(payload.cardId);
-      const nextOwner: CharacterId | null =
-        action === 'acquire_card'
-          ? (payload.characterId as CharacterId)
-          : action === 'transfer_card'
-          ? (payload.toCharacterId as CharacterId)
-          : null;
-
-      setRoom((prev) => {
-        const next: RoomState = {
-          ...prev,
-          cardOwners: { ...prev.cardOwners, [cardId]: nextOwner }
-        };
-        try {
-          localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(next));
-        } catch {}
-        syncToSupabase(next);
-        return next;
-      });
-    }
-
-    // 2. 방 초기화인 경우 로컬스토리지 삭제 및 초기 상태로 즉시 리셋
     if (action === 'reset_room') {
       const initial = createInitialLocalRoom(roomCode);
       setRoom(initial);
@@ -285,10 +250,109 @@ export default function HomePage() {
       } catch {}
       setSelectedCharId(null);
       syncToSupabase(initial);
+    } else {
+      setRoom((prev) => {
+        const next: RoomState = {
+          ...prev,
+          updatedAt: Date.now()
+        };
+
+        switch (action) {
+          case 'unlock_gate': {
+            const gate = Number(payload.gate);
+            if (gate === 0 || gate === 1) next.gate0Unlocked = true;
+            if (gate === 1) next.gate1Unlocked = true;
+            if (gate === 2) next.gate2Unlocked = true;
+            if (gate === 3) next.gate3Unlocked = true;
+            break;
+          }
+          case 'acquire_card': {
+            const cardId = String(payload.cardId);
+            next.cardOwners = {
+              ...prev.cardOwners,
+              [cardId]: payload.characterId as CharacterId
+            };
+            break;
+          }
+          case 'transfer_card': {
+            const cardId = String(payload.cardId);
+            next.cardOwners = {
+              ...prev.cardOwners,
+              [cardId]: payload.toCharacterId as CharacterId
+            };
+            break;
+          }
+          case 'return_card': {
+            const cardId = String(payload.cardId);
+            next.cardOwners = {
+              ...prev.cardOwners,
+              [cardId]: null
+            };
+            break;
+          }
+          case 'set_bribe': {
+            next.bribedResident = (payload.residentId as CharacterId) || null;
+            break;
+          }
+          case 'submit_secret_pick': {
+            const actor = payload.actor as 'clive' | 'grace';
+            const targetId = (payload.targetId as CharacterId) || null;
+            if (actor === 'clive') next.cliveSecretPick = targetId;
+            if (actor === 'grace') next.graceSecretPick = targetId;
+            break;
+          }
+          case 'set_jailed': {
+            const charId = (payload.characterId as CharacterId) || null;
+            next.jailedCharacter = charId;
+            if (charId !== 'clive') next.cliveEscapeRoll = null;
+            break;
+          }
+          case 'roll_clive_escape': {
+            next.cliveEscapeRoll =
+              typeof payload.value === 'number' ? payload.value : null;
+            break;
+          }
+          case 'set_chase_dice': {
+            const charId = payload.characterId as CharacterId;
+            const nextRolls = { ...prev.chaseDiceRolls };
+            if (payload.value === null || payload.value === undefined) {
+              delete nextRolls[charId];
+            } else {
+              nextRolls[charId] = Number(payload.value);
+            }
+            next.chaseDiceRolls = nextRolls;
+            break;
+          }
+          case 'set_skill_status': {
+            const actor = payload.actor as ActionSkillActor;
+            const status = payload.status as SkillStatus;
+            next.skillStatus = {
+              ...(prev.skillStatus || {}),
+              [actor]: status
+            };
+            break;
+          }
+          case 'set_player_score': {
+            const charId = payload.characterId as CharacterId;
+            next.playerScores = {
+              ...(prev.playerScores || {}),
+              [charId]: Number(payload.score)
+            };
+            break;
+          }
+        }
+
+        try {
+          localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(next));
+        } catch {}
+        syncToSupabase(next);
+        return next;
+      });
     }
 
+    // 백그라운드 API 동기화 (서버 메모리 Fallback용, 낙관적 최신 상태를 덮어쓰지 않음)
     try {
-      const res = await fetch('/api/room', {
+      await fetch('/api/room', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -297,50 +361,10 @@ export default function HomePage() {
           ...payload
         })
       });
-      if (res.ok) {
-        if (
-          action === 'reset_room' ||
-          action === 'acquire_card' ||
-          action === 'transfer_card' ||
-          action === 'return_card'
-        ) {
-          return { ok: true };
-        }
-        const data: RoomState = await res.json();
-        setRoom((prev) => {
-          const merged: RoomState = {
-            ...data,
-            gate0Unlocked: prev.gate0Unlocked || data.gate0Unlocked,
-            gate1Unlocked: prev.gate1Unlocked || data.gate1Unlocked,
-            gate2Unlocked: prev.gate2Unlocked || data.gate2Unlocked,
-            gate3Unlocked: prev.gate3Unlocked || data.gate3Unlocked,
-            cardOwners: {
-              ...data.cardOwners,
-              ...Object.fromEntries(
-                Object.entries(prev.cardOwners).filter(([_, owner]) => owner !== null)
-              )
-            }
-          };
-          try {
-            localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(merged));
-          } catch {}
-          syncToSupabase(merged);
-          return merged;
-        });
-        return { ok: true };
-      } else {
-        const data = await res.json().catch(() => ({}));
-        if (action === 'unlock_gate') {
-          return { ok: true };
-        }
-        return { ok: false, error: data.error || '요청 실패' };
-      }
     } catch {
-      if (action === 'unlock_gate') {
-        return { ok: true };
-      }
-      return { ok: false, error: '네트워크 연결 상태를 확인해주세요.' };
+      // Supabase Realtime 및 localStorage 동기화 우선이므로 네트워크 오류 무시
     }
+    return { ok: true };
   };
 
   // 캐릭터별 추격전 주사위 보너스 자동 계산 (개당 +1, 클라이브 기본 +1)
@@ -451,6 +475,9 @@ export default function HomePage() {
               dispatchRoomAction('set_bribe', { residentId })
             }
             onUnlockGate={handleUnlockGate}
+            onUpdatePlayerScore={(characterId, score) =>
+              dispatchRoomAction('set_player_score', { characterId, score })
+            }
           />
         )}
 
@@ -501,6 +528,12 @@ export default function HomePage() {
             }
             onSetChaseDice={(characterId, value) =>
               dispatchRoomAction('set_chase_dice', { characterId, value })
+            }
+            onSetSkillStatus={(actor, status) =>
+              dispatchRoomAction('set_skill_status', { actor, status })
+            }
+            onSetPlayerScore={(characterId, score) =>
+              dispatchRoomAction('set_player_score', { characterId, score })
             }
             onResetRoom={() => dispatchRoomAction('reset_room')}
           />
