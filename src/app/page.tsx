@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { CHARACTER_MAP } from '@/data/characters';
-import { CLUE_CARDS } from '@/data/cards';
+import { CLUE_CARDS, calculateChaseDiceBonus } from '@/data/cards';
 import { ActionSkillActor, CharacterId, RoomState, SkillStatus } from '@/types/game';
 import { supabase } from '@/lib/supabase';
 import LobbyView from '@/components/LobbyView';
@@ -372,24 +372,7 @@ export default function HomePage() {
     (charId: CharacterId): number => {
       const charData = CHARACTER_MAP[charId];
       if (!charData) return 0;
-
-      let bonus = charId === 'clive' ? 1 : 0;
-      for (const card of CLUE_CARDS) {
-        if (room.cardOwners[card.id] === charId) {
-          if (
-            charData.faction === 'kill_subdue' &&
-            card.category === 'kill_item'
-          ) {
-            bonus += card.diceBonus ?? 1;
-          } else if (
-            charData.faction === 'survival' &&
-            card.category === 'survival_item'
-          ) {
-            bonus += card.diceBonus ?? 1;
-          }
-        }
-      }
-      return bonus;
+      return calculateChaseDiceBonus(charId, charData.faction, room.cardOwners);
     },
     [room.cardOwners]
   );

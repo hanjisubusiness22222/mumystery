@@ -1,4 +1,4 @@
-import { ClueCardData, ZoneInfo } from '@/types/game';
+import { CharacterId, ClueCardData, FactionType, ZoneInfo } from '@/types/game';
 
 export const ZONES: ZoneInfo[] = [
   {
@@ -359,3 +359,27 @@ export const CLUE_CARDS: ClueCardData[] = [
       '바위 벽에 피로 갈겨쓴 글귀다.\n"이것이 나의 업보일까. 하지만 이렇게는 죽을 수 없다. 반드시 나는 살아야 한다."'
   }
 ];
+
+/**
+ * 캐릭터 진영 및 역할에 따라 후반전 추격전 주사위 보너스를 계산한다.
+ * 플로렌스는 중립(neutral) 표기이지만 행크를 살려야 하는 생존 루트이므로 survival_item 보너스를 적용한다.
+ */
+export function calculateChaseDiceBonus(
+  charId: CharacterId,
+  faction: FactionType,
+  cardOwners: Record<string, CharacterId | null>
+): number {
+  let bonus = charId === 'clive' ? 1 : 0;
+  const usesSurvivalItems = faction === 'survival' || charId === 'florence';
+
+  for (const card of CLUE_CARDS) {
+    if (cardOwners[card.id] !== charId) continue;
+
+    if (faction === 'kill_subdue' && card.category === 'kill_item') {
+      bonus += card.diceBonus ?? 1;
+    } else if (usesSurvivalItems && card.category === 'survival_item') {
+      bonus += card.diceBonus ?? 1;
+    }
+  }
+  return bonus;
+}
