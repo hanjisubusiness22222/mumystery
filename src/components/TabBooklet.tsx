@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { CHARACTERS, CHARACTER_MAP } from '@/data/characters';
 import { GM_TIMETABLE_GUIDE } from '@/data/timetable';
 import { CharacterData, CharacterId, CharacterSkill, RoomState } from '@/types/game';
+import CharacterAvatar from '@/components/CharacterAvatar';
 import {
   BookOpen,
   CheckSquare,
@@ -213,9 +214,9 @@ export default function TabBooklet({
 
   return (
     <div className="space-y-5 pb-8">
-      {/* 상단 캐릭터 명언 배너 */}
+      {/* 상단 캐릭터 프로필 & 명언 배너 */}
       <div
-        className={`p-4 rounded-2xl bg-gradient-to-br ${character.colorClass} border ${character.accentBorder}/60 shadow-lg space-y-2`}
+        className={`p-4 rounded-2xl bg-gradient-to-br ${character.colorClass} border ${character.accentBorder}/60 shadow-lg space-y-3`}
       >
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-stone-950/80 text-amber-300 border border-amber-700/50">
@@ -225,9 +226,16 @@ export default function TabBooklet({
             만점: {character.maxPoints}점
           </span>
         </div>
-        <p className="text-sm font-serif italic text-amber-100 leading-relaxed pt-1">
-          &ldquo;{character.quote}&rdquo;
-        </p>
+        <div className="flex items-center gap-3.5 pt-0.5">
+          <CharacterAvatar
+            character={character}
+            size="xl"
+            className="border-2 border-amber-500/70 shadow-lg"
+          />
+          <p className="text-sm font-serif italic text-amber-100 leading-relaxed flex-1">
+            &ldquo;{character.quote}&rdquo;
+          </p>
+        </div>
       </div>
 
       {/* 사법거래 회유서 수락 알림 배너 (매수된 주민에게 표시) */}
@@ -460,7 +468,11 @@ export default function TabBooklet({
           onClick={() => setFullscreenSkill(null)}
         >
           <div className="max-w-sm w-full p-6 rounded-3xl bg-gradient-to-b from-amber-950 via-stone-900 to-stone-950 border-2 border-amber-500 shadow-2xl space-y-5">
-            <div className="text-5xl">{character.emoji}</div>
+            <CharacterAvatar
+              character={character}
+              size="2xl"
+              className="mx-auto border-2 border-amber-400 shadow-xl"
+            />
             <div className="space-y-1">
               <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-900/70 text-amber-200 border border-amber-600">
                 {character.name} · {fullscreenSkill.priorityBadge}

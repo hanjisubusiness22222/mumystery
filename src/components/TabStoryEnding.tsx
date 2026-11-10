@@ -16,6 +16,7 @@ import {
   RoomState,
   SkillStatus
 } from '@/types/game';
+import CharacterAvatar from '@/components/CharacterAvatar';
 import {
   Film,
   Lock,
@@ -691,8 +692,8 @@ export default function TabStoryEnding({
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">{c.emoji}</span>
+                        <div className="flex items-center gap-2.5">
+                          <CharacterAvatar character={c} size="sm" />
                           <div>
                             <span className="text-xs font-bold text-stone-100">
                               [{c.initial}] {c.name.split(' ')[0]}
@@ -974,7 +975,7 @@ export default function TabStoryEnding({
                             <span className="text-[11px] font-mono text-stone-500 w-4 text-center shrink-0">
                               {idx + 1}
                             </span>
-                            <span className="text-base shrink-0">{entry.char.emoji}</span>
+                            <CharacterAvatar character={entry.char} size="xs" />
                             <div className="min-w-0">
                               <div className="font-bold text-stone-100 truncate">
                                 [{entry.char.initial}] {entry.char.name.split(' ')[0]}
@@ -1061,36 +1062,50 @@ export default function TabStoryEnding({
               {/* 선택된 엔딩 대본 표시 */}
               {selectedEndingId === 'AB' ? (
                 <div className="space-y-4">
-                  {[ENDINGS[0], ENDINGS[1]].map((end) => (
-                    <div
-                      key={end.id}
-                      className="p-4 rounded-2xl bg-stone-950 border border-rose-700/60 space-y-3"
-                    >
-                      <h4 className="text-sm font-extrabold text-amber-200">
-                        {end.emoji} {end.title}
-                      </h4>
-                      <p className="text-[11px] text-amber-400">
-                        {end.condition}
-                      </p>
-                      <div className="p-3.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-stone-100 whitespace-pre-line leading-relaxed font-serif">
-                        {end.body}
+                  {[ENDINGS[0], ENDINGS[1]].map((end) => {
+                    const endChar = CHARACTER_MAP[end.characterId];
+                    return (
+                      <div
+                        key={end.id}
+                        className="p-4 rounded-2xl bg-stone-950 border border-rose-700/60 space-y-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          {endChar && <CharacterAvatar character={endChar} size="lg" />}
+                          <div className="min-w-0">
+                            <h4 className="text-sm font-extrabold text-amber-200 leading-snug">
+                              {end.title}
+                            </h4>
+                            <p className="text-[11px] text-amber-400 mt-0.5">
+                              {end.condition}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="p-3.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-stone-100 whitespace-pre-line leading-relaxed font-serif">
+                          {end.body}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 (() => {
                   const end =
                     ENDINGS.find((e) => e.id === selectedEndingId) ||
                     ENDINGS[2];
+                  const endChar = CHARACTER_MAP[end.characterId];
                   return (
                     <div className="p-4 rounded-2xl bg-stone-950 border border-amber-700/60 space-y-3">
-                      <h4 className="text-sm font-extrabold text-amber-200">
-                        {end.emoji} {end.title}
-                      </h4>
-                      <p className="text-[11px] text-amber-400">
-                        {end.condition}
-                      </p>
+                      <div className="flex items-center gap-3">
+                        {endChar && <CharacterAvatar character={endChar} size="lg" />}
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-extrabold text-amber-200 leading-snug">
+                            {end.title}
+                          </h4>
+                          <p className="text-[11px] text-amber-400 mt-0.5">
+                            {end.condition}
+                          </p>
+                        </div>
+                      </div>
                       <div className="p-3.5 rounded-xl bg-stone-900 border border-stone-800 text-xs text-stone-100 whitespace-pre-line leading-relaxed font-serif">
                         {end.body}
                       </div>

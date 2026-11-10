@@ -36,6 +36,7 @@ export interface CharacterData {
   name: string;
   roleTitle: string;
   emoji: string;
+  avatarUrl?: string;
   colorClass: string;
   accentBorder: string;
   faction: FactionType;

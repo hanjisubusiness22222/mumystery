@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { CHARACTERS, GM_CHARACTER } from '@/data/characters';
 import { CharacterData, CharacterId } from '@/types/game';
+import CharacterAvatar from '@/components/CharacterAvatar';
 import { Shield, Users, Sparkles, Lock } from 'lucide-react';
 
 interface LobbyViewProps {
@@ -123,9 +124,7 @@ export default function LobbyView({
                 onClick={() => handleOpenPinModal(char)}
                 className={`w-full text-left p-3.5 rounded-xl bg-gradient-to-r ${char.colorClass} border border-stone-700/80 hover:border-amber-500/80 transition shadow-md flex items-start gap-3`}
               >
-                <div className="text-3xl bg-stone-950/60 w-12 h-12 rounded-xl flex items-center justify-center border border-stone-700/60 shrink-0">
-                  {char.emoji}
-                </div>
+                <CharacterAvatar character={char} size="lg" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-bold text-amber-100 text-sm">
@@ -174,9 +173,11 @@ export default function LobbyView({
       {confirmChar && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-stone-900 border border-amber-600/70 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-center">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-stone-950 border border-amber-700/60 flex items-center justify-center text-3xl">
-              {confirmChar.emoji}
-            </div>
+            <CharacterAvatar
+              character={confirmChar}
+              size="2xl"
+              className="mx-auto border-2 border-amber-500/80 shadow-xl"
+            />
             <div className="space-y-1">
               <h3 className="text-base font-bold text-amber-100">
                 [{confirmChar.initial}] {confirmChar.name}

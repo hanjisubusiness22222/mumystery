@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { CharacterData, RoomState } from '@/types/game';
 import { TIMETABLE_STEPS } from '@/data/timetable';
+import CharacterAvatar from '@/components/CharacterAvatar';
 import { Lock, Unlock, Compass, Dices, HelpCircle, LogOut, Eye, EyeOff, RotateCcw } from 'lucide-react';
 
 interface HeaderBarProps {
@@ -32,9 +33,9 @@ export default function HeaderBar({
     <>
       <header className="sticky top-0 z-30 bg-stone-950/95 backdrop-blur border-b border-amber-900/50 px-3 py-2.5 shadow-lg">
         <div className="max-w-md mx-auto flex items-center justify-between gap-2">
-          {/* 좌측: 캐릭터 뱃지 & 잠금/변경 */}
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-2xl select-none">{character.emoji}</span>
+          {/* 좌측: 캐릭터 아바타 & 잠금/변경 */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <CharacterAvatar character={character} size="sm" />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-amber-100 text-sm truncate">

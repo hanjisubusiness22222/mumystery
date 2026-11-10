@@ -5,6 +5,7 @@ import { CLUE_CARDS, ZONES } from '@/data/cards';
 import { CHARACTER_MAP } from '@/data/characters';
 import { getCurrentDraftState, CHARACTER_RESTRICTED_ZONES } from '@/data/draft';
 import { CharacterData, CharacterId, RoomState } from '@/types/game';
+import CharacterAvatar from '@/components/CharacterAvatar';
 import {
   Lock,
   Search,
@@ -171,9 +172,7 @@ export default function TabClueMap({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-stone-900 border border-amber-600/60 flex items-center justify-center text-xl shrink-0 shadow">
-                      {currentTurnChar.emoji}
-                    </div>
+                    <CharacterAvatar character={currentTurnChar} size="md" />
                     <div>
                       <div className="text-[10px] text-stone-400">
                         {isMyTurn ? '🎉 [지금 내 차례!]' : '현재 단서 선택 차례'}
