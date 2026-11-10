@@ -28,7 +28,8 @@ import {
   BookOpen,
   Crosshair,
   Zap,
-  Crown
+  Crown,
+  RotateCcw
 } from 'lucide-react';
 
 interface TabStoryEndingProps {
@@ -43,6 +44,7 @@ interface TabStoryEndingProps {
   onSetJailed: (charId: CharacterId | null) => void;
   onRollCliveEscape: (val: number | null) => void;
   onSetChaseDice: (charId: CharacterId, val: number | null) => void;
+  onResetChaseDice?: (characterIds?: CharacterId[]) => void;
   onSetSkillStatus?: (actor: ActionSkillActor, status: SkillStatus) => void;
   onSetPlayerScore?: (characterId: CharacterId, score: number) => void;
   onResetRoom?: () => void;
@@ -57,6 +59,7 @@ export default function TabStoryEnding({
   onSetJailed,
   onRollCliveEscape,
   onSetChaseDice,
+  onResetChaseDice,
   onSetSkillStatus,
   onSetPlayerScore,
   onResetRoom
@@ -100,6 +103,15 @@ export default function TabStoryEnding({
     chaseResults.length > 0 && chaseResults[0].total !== null
       ? chaseResults[0].total
       : null;
+
+  const tiedTopResults =
+    highestTotal !== null
+      ? chaseResults.filter((r) => !r.blocked && r.total === highestTotal)
+      : [];
+  const isTieAtTop = tiedTopResults.length >= 2;
+  const hasAnyChaseRoll = activeChars.some(
+    (c) => (room.chaseDiceRolls[c.id] ?? null) !== null
+  );
 
   // 클라이브 & 그레이스 비밀 지목 채점 결과
   const clivePickedChar = room.cliveSecretPick
@@ -590,14 +602,70 @@ export default function TabStoryEnding({
 
             {/* 12단계: 행크 추격전 주사위 & 아이템 자동 합산기 */}
             <div className="p-3.5 rounded-xl bg-stone-950 border border-amber-700/60 space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                  <Dices className="w-4 h-4 text-amber-400" /> 행크 추격전 최종 결판 (주사위 판정)
-                </h3>
-                <span className="text-[10px] text-stone-400">
-                  최종 눈금 = 1d6 + 아이템 보너스(개당 +1)
-                </span>
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <Dices className="w-4 h-4 text-amber-400" /> 행크 추격전 최종 결판 (주사위 판정)
+                  </h3>
+                  <span className="text-[10px] text-stone-400">
+                    최종 눈금 = 1d6 + 아이템 보너스(개당 +1)
+                  </span>
+                </div>
+                {character.id === 'gm' && hasAnyChaseRoll && onResetChaseDice && (
+                  <button
+                    onClick={() => {
+                      if (
+                        confirm(
+                          '모든 플레이어의 추격전 주사위를 초기화하고 처음부터 다시 굴리시겠습니까?'
+                        )
+                      ) {
+                        onResetChaseDice();
+                      }
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 border border-stone-700 text-stone-200 text-[10px] font-bold shrink-0 transition"
+                  >
+                    <RotateCcw className="w-3 h-3" /> 전체 재굴림
+                  </button>
+                )}
               </div>
+
+              {isTieAtTop && (
+                <div className="p-3 rounded-xl bg-amber-950/60 border border-amber-500/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <div className="space-y-0.5 text-xs">
+                    <div className="font-extrabold text-amber-200 flex items-center gap-1.5">
+                      ⚡ 공동 1위 발생! (최종 {highestTotal}점 동점)
+                    </div>
+                    <p className="text-[11px] text-amber-100/90 leading-snug">
+                      대상:{' '}
+                      <b>
+                        {tiedTopResults
+                          .map((r) => `${r.char.emoji} ${r.char.name.split(' ')[0]}`)
+                          .join(', ')}
+                      </b>
+                      {' · '}동점자끼리 주사위를 다시 굴려 최종 1위를 가립니다.
+                    </p>
+                  </div>
+                  {character.id === 'gm' && onResetChaseDice && (
+                    <button
+                      onClick={() => {
+                        const names = tiedTopResults
+                          .map((r) => r.char.name.split(' ')[0])
+                          .join(', ');
+                        if (
+                          confirm(
+                            `동점자인 [${names}]의 주사위만 초기화하고 재굴림을 진행하시겠습니까?`
+                          )
+                        ) {
+                          onResetChaseDice(tiedTopResults.map((r) => r.char.id));
+                        }
+                      }}
+                      className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-[11px] shrink-0 shadow transition"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" /> 동점자만 재굴림 ({tiedTopResults.length}명)
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-2">
                 {activeChars.map((c) => {

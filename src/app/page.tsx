@@ -438,9 +438,20 @@ export default function HomePage() {
             const charId = payload.characterId as CharacterId;
             const nextRolls = { ...prev.chaseDiceRolls };
             if (payload.value === null || payload.value === undefined) {
-              delete nextRolls[charId];
+              nextRolls[charId] = null;
             } else {
               nextRolls[charId] = Number(payload.value);
+            }
+            next.chaseDiceRolls = nextRolls;
+            break;
+          }
+          case 'reset_chase_dice': {
+            const nextRolls = { ...prev.chaseDiceRolls };
+            const targetIds = Array.isArray(payload.characterIds)
+              ? (payload.characterIds as CharacterId[])
+              : (Object.keys(nextRolls) as CharacterId[]);
+            for (const id of targetIds) {
+              nextRolls[id] = null;
             }
             next.chaseDiceRolls = nextRolls;
             break;
@@ -699,6 +710,9 @@ export default function HomePage() {
             }
             onSetChaseDice={(characterId, value) =>
               dispatchRoomAction('set_chase_dice', { characterId, value })
+            }
+            onResetChaseDice={(characterIds) =>
+              dispatchRoomAction('reset_chase_dice', { characterIds })
             }
             onSetSkillStatus={(actor, status) =>
               dispatchRoomAction('set_skill_status', { actor, status })

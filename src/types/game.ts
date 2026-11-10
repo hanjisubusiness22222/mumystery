@@ -116,8 +116,8 @@ export interface RoomState {
   // 최종 투표 유치장 수감자
   jailedCharacter: CharacterId | null;
   cliveEscapeRoll: number | null; // 클라이브 수감 시 탈옥 주사위 (4 이상 탈옥 성공)
-  // 최후의 결판: 행크 추격전 주사위 눈금 (1~6)
-  chaseDiceRolls: Partial<Record<CharacterId, number>>;
+  // 최후의 결판: 행크 추격전 주사위 눈금 (1~6, 재설정 시 null)
+  chaseDiceRolls: Partial<Record<CharacterId, number | null>>;
   // 플레이어별 목표 점수 (설정집 체크 연동 & 마스터 최종 정산)
   playerScores?: Partial<Record<CharacterId, number>>;
   updatedAt: number;

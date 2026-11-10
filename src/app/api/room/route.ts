@@ -174,9 +174,19 @@ export async function POST(req: NextRequest) {
         const characterId = body.characterId as CharacterId;
         const value = body.value;
         if (value === null || value === undefined) {
-          delete room.chaseDiceRolls[characterId];
+          room.chaseDiceRolls[characterId] = null;
         } else {
           room.chaseDiceRolls[characterId] = Number(value);
+        }
+        break;
+      }
+
+      case 'reset_chase_dice': {
+        const targetIds = Array.isArray(body.characterIds)
+          ? (body.characterIds as CharacterId[])
+          : (Object.keys(room.chaseDiceRolls) as CharacterId[]);
+        for (const id of targetIds) {
+          room.chaseDiceRolls[id] = null;
         }
         break;
       }
