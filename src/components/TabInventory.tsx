@@ -68,20 +68,34 @@ export default function TabInventory({
     return calculateChaseDiceBonus(charId, charData.faction, room.cardOwners);
   };
 
+  // 행크 무덤 이벤트(gate1) 전에는 일반 플레이어에게 단서와 아이템 두 가지로만 구분해 표시
+  const getCardDisplayMeta = (card: ClueCardData) => {
+    const hidePreEventDetails = !isGM && !room.gate1Unlocked;
+    const isClue = card.category === 'clue';
+    const isChaseItem =
+      card.category === 'kill_item' || card.category === 'survival_item';
+
+    if (hidePreEventDetails) {
+      return {
+        badgeText: isClue ? '🔎 단서' : '🎒 아이템',
+        badgeStyle: getBadgeStyle(isClue ? 'clue' : 'quest_item'),
+        showEffectNote: false
+      };
+    }
+
+    return {
+      badgeText: card.badgeText,
+      badgeStyle: getBadgeStyle(card.category),
+      showEffectNote: Boolean(card.effectNote) && (!isChaseItem || room.gate1Unlocked)
+    };
+  };
+
   // 공용 모달: 전체화면 카드 상세 보기 & 양도 모달
   const renderModals = () => (
     <>
       {fullscreenCard && (() => {
-        const isChaseItem =
-          fullscreenCard.category === 'kill_item' ||
-          fullscreenCard.category === 'survival_item';
-        const hideBonusInfo = !isGM && isChaseItem && !room.gate1Unlocked;
-
-        const badgeText = hideBonusInfo
-          ? fullscreenCard.category === 'kill_item'
-            ? '💥 굉장히 위험해 보이는 물품이다'
-            : '🛡️ 생존에 유용해 보이는 물품이다.'
-          : fullscreenCard.badgeText;
+        const { badgeText, badgeStyle, showEffectNote } =
+          getCardDisplayMeta(fullscreenCard);
 
         return (
           <div
@@ -94,9 +108,7 @@ export default function TabInventory({
             >
               <div className="flex items-center justify-between gap-2">
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${getBadgeStyle(
-                    fullscreenCard.category
-                  )}`}
+                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${badgeStyle}`}
                 >
                   {badgeText}
                 </span>
@@ -113,7 +125,7 @@ export default function TabInventory({
                 {fullscreenCard.description}
               </div>
 
-              {fullscreenCard.effectNote && !hideBonusInfo && (
+              {showEffectNote && fullscreenCard.effectNote && (
                 <div className="p-3 rounded-xl bg-amber-950/50 border border-amber-700/60 text-xs text-amber-200 font-semibold">
                   {fullscreenCard.effectNote}
                 </div>
@@ -512,15 +524,8 @@ export default function TabInventory({
           </div>
 
           {myCards.map((card) => {
-            const isChaseItem =
-              card.category === 'kill_item' || card.category === 'survival_item';
-            const hideBonusInfo = isChaseItem && !room.gate1Unlocked;
-
-            const badgeText = hideBonusInfo
-              ? card.category === 'kill_item'
-                ? '💥 굉장히 위험해 보이는 물품이다'
-                : '🛡️ 생존에 유용해 보이는 물품이다.'
-              : card.badgeText;
+            const { badgeText, badgeStyle, showEffectNote } =
+              getCardDisplayMeta(card);
 
             return (
               <div
@@ -529,9 +534,7 @@ export default function TabInventory({
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
-                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${getBadgeStyle(
-                      card.category
-                    )}`}
+                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${badgeStyle}`}
                   >
                     {badgeText}
                   </span>
@@ -548,7 +551,7 @@ export default function TabInventory({
                   {card.description}
                 </div>
 
-                {card.effectNote && !hideBonusInfo && (
+                {showEffectNote && card.effectNote && (
                   <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-700/50 text-[11px] text-amber-200 font-semibold flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                     <span>{card.effectNote}</span>
