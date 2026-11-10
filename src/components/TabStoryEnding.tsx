@@ -882,7 +882,7 @@ export default function TabStoryEnding({
                 </div>
 
                 <div className="p-2 rounded bg-stone-900 border border-stone-800">
-                  • <b>📜 [어니스트 시장의 비리 장부] 최종 소유자</b>:{' '}
+                  • <b>📜 [철도 부지 매각 이중 장부] 최종 소유자</b>:{' '}
                   {room.cardOwners['1-1'] ? (
                     <b className="text-amber-300">
                       {CHARACTER_MAP[room.cardOwners['1-1']].name}
