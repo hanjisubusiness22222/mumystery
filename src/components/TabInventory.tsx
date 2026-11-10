@@ -126,16 +126,11 @@ export default function TabInventory({
                 {fullscreenCard.description}
               </div>
 
-              {fullscreenCard.effectNote &&
-                (hideBonusInfo ? (
-                  <div className="p-3 rounded-xl bg-stone-950/80 border border-stone-800 text-xs text-stone-500">
-                    🔒 [아이템 특수 효과는 긴급 상황 발생 이후 공개됩니다]
-                  </div>
-                ) : (
-                  <div className="p-3 rounded-xl bg-amber-950/50 border border-amber-700/60 text-xs text-amber-200 font-semibold">
-                    {fullscreenCard.effectNote}
-                  </div>
-                ))}
+              {fullscreenCard.effectNote && !hideBonusInfo && (
+                <div className="p-3 rounded-xl bg-amber-950/50 border border-amber-700/60 text-xs text-amber-200 font-semibold">
+                  {fullscreenCard.effectNote}
+                </div>
+              )}
 
               <button
                 onClick={() => setFullscreenCard(null)}
@@ -566,17 +561,12 @@ export default function TabInventory({
                   {card.description}
                 </div>
 
-                {card.effectNote &&
-                  (hideBonusInfo ? (
-                    <div className="p-2.5 rounded-lg bg-stone-950/70 border border-stone-800 text-[11px] text-stone-500 flex items-center gap-1.5">
-                      <span>🔒 [아이템 특수 효과는 긴급 상황 발생 이후 공개됩니다]</span>
-                    </div>
-                  ) : (
-                    <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-700/50 text-[11px] text-amber-200 font-semibold flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      <span>{card.effectNote}</span>
-                    </div>
-                  ))}
+                {card.effectNote && !hideBonusInfo && (
+                  <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-700/50 text-[11px] text-amber-200 font-semibold flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>{card.effectNote}</span>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 pt-1">
                   <button
