@@ -70,7 +70,7 @@ export default function LobbyView({
               <Sparkles className="w-3.5 h-3.5" /> 서부극 누아르 머더 미스터리
             </div>
             <h1 className="text-2xl font-extrabold tracking-tight text-amber-100 drop-shadow">
-              ⭐ 옛날 옛적 뉴프론티어에서 ⭐
+              ⭐ 옛날 옛적 뉴프론티어에서
             </h1>
             <p className="text-xs text-stone-300 italic">
               Once Upon a Time in New Frontier · 모바일 디지털 수첩

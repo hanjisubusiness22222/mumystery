@@ -248,14 +248,24 @@ export default function HomePage() {
       return { ok: true };
     }
 
-    // 카드 획득인 경우 즉시 로컬 반영 및 Supabase 동기화 (초고속 실시간 반응)
-    if (action === 'acquire_card') {
+    // 카드 획득/양도/회수인 경우 즉시 로컬 반영 및 Supabase 동기화 (초고속 실시간 반응)
+    if (
+      action === 'acquire_card' ||
+      action === 'transfer_card' ||
+      action === 'return_card'
+    ) {
       const cardId = String(payload.cardId);
-      const characterId = payload.characterId as CharacterId;
+      const nextOwner: CharacterId | null =
+        action === 'acquire_card'
+          ? (payload.characterId as CharacterId)
+          : action === 'transfer_card'
+          ? (payload.toCharacterId as CharacterId)
+          : null;
+
       setRoom((prev) => {
         const next: RoomState = {
           ...prev,
-          cardOwners: { ...prev.cardOwners, [cardId]: characterId }
+          cardOwners: { ...prev.cardOwners, [cardId]: nextOwner }
         };
         try {
           localStorage.setItem(`nf_room_state_${roomCode}`, JSON.stringify(next));
@@ -288,7 +298,12 @@ export default function HomePage() {
         })
       });
       if (res.ok) {
-        if (action === 'reset_room') {
+        if (
+          action === 'reset_room' ||
+          action === 'acquire_card' ||
+          action === 'transfer_card' ||
+          action === 'return_card'
+        ) {
           return { ok: true };
         }
         const data: RoomState = await res.json();
@@ -516,7 +531,9 @@ export default function HomePage() {
             }`}
           >
             <BookOpen className="w-4 h-4 mb-0.5" />
-            <span className="text-[11px]">내 설정집</span>
+            <span className="text-[11px]">
+              {selectedCharId === 'gm' ? '마스터 설정집' : '내 설정집'}
+            </span>
           </button>
 
           <button
@@ -544,7 +561,9 @@ export default function HomePage() {
           >
             <Briefcase className="w-4 h-4 mb-0.5" />
             <span className="text-[11px]">
-              내 소지품 {myInventoryCount > 0 ? `(${myInventoryCount})` : ''}
+              {selectedCharId === 'gm'
+                ? '전체 소지품'
+                : `내 소지품 ${myInventoryCount > 0 ? `(${myInventoryCount})` : ''}`}
             </span>
           </button>
         </div>
