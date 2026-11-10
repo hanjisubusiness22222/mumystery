@@ -328,7 +328,7 @@ export default function TabStoryEnding({
               {character.id === 'clive' && (
                 <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-600/60 space-y-2">
                   <div className="text-xs font-bold text-amber-200">
-                    🔫 [클라이브 전용] 행크의 조력자(+2점 목표) 비밀 지목
+                    ⭐ [클라이브 전용] 행크의 조력자(+2점 목표) 비밀 지목
                   </div>
                   {room.cliveSecretPick ? (
                     <div className="p-2.5 rounded-lg bg-emerald-950/70 border border-emerald-600/70 text-xs font-bold text-emerald-300 flex items-center justify-between">
@@ -431,9 +431,9 @@ export default function TabStoryEnding({
               <div className="space-y-1.5 text-[11px]">
                 {(
                   [
-                    { actor: 'clive', label: '1번 · 🔫 클라이브 (총구 겨누기)', desc: '대상 1명 투표권 박탈 & 도주 봉인' },
+                    { actor: 'clive', label: '1번 · ⭐ 클라이브 (총구 겨누기)', desc: '대상 1명 투표권 박탈 & 도주 봉인' },
                     { actor: 'annie', label: '2번 · 🍷 애니 (수면제)', desc: '대상 1명 특수 능력 영구 봉인' },
-                    { actor: 'david', label: '3번 · ⭐ 데이비드 (아이템 압수)', desc: '타인 아이템 1개 압수 (소지품에서 이동)' },
+                    { actor: 'david', label: '3번 · 🐴 데이비드 (아이템 압수)', desc: '타인 아이템 1개 압수 (소지품에서 이동)' },
                     { actor: 'florence', label: '4번 · 💉 플로렌스 (현장 도주)', desc: '최종 투표 유치장 수감 면제' },
                     { actor: 'grace', label: '방어 · ⛪ 그레이스 (은빛 십자가)', desc: '공격 1회 즉시 방어' }
                   ] as const
@@ -831,7 +831,7 @@ export default function TabStoryEnding({
               </h3>
               <div className="space-y-1.5 text-stone-200">
                 <div className="p-2 rounded bg-stone-900 border border-stone-800">
-                  • <b>🔫 클라이브의 [행크 조력자] 지목</b>:{' '}
+                  • <b>⭐ 클라이브의 [행크 조력자] 지목</b>:{' '}
                   {clivePickedChar ? (
                     <>
                       <b>{clivePickedChar.name}</b> 지목 ➔{' '}

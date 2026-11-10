@@ -122,7 +122,7 @@ export const ENDINGS: EndingScript[] = [
   {
     id: 'C',
     characterId: 'clive',
-    emoji: '🔫',
+    emoji: '⭐',
     title: '[Ending C] 클라이브 1위 달성 : 《석양 속의 무법자 (매드독의 완전범죄)》',
     condition: '조건: C - 클라이브가 1위를 달성하여 행크를 직접 사살한 경우',
     body: `석양이 붉게 내려앉은 외곽 폐광 제3갱도.
@@ -156,7 +156,7 @@ export const ENDINGS: EndingScript[] = [
   {
     id: 'D',
     characterId: 'david',
-    emoji: '⭐',
+    emoji: '🐴',
     title: '[Ending D] 데이비드 1위 달성 : 《되찾은 별, 계승된 정의 (새로운 보안관의 탄생)》',
     condition: '조건: D - 부관 데이비드가 1위를 달성한 경우',
     body: `외곽 폐광의 차가운 어둠 속, 거친 숨을 몰아쉬며 산탄총을 장전하던 행크의 손목 위로 날카로운 총성이 꽂혔습니다.
