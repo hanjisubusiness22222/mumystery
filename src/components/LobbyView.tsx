@@ -21,7 +21,7 @@ export default function LobbyView({
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState('');
 
-  // 캐릭터별 전용 비밀번호 매핑 (A, B, C, D, E, F, G: 111~117 / GM: 0000)
+  // 캐릭터별 전용 비밀번호 매핑 (A, B, C, D, E, F, G: 111~117 / GM: 2337)
   const CHARACTER_PINS: Record<CharacterId, string> = {
     annie: '111',
     benny: '112',
@@ -30,7 +30,7 @@ export default function LobbyView({
     ernest: '115',
     florence: '116',
     grace: '117',
-    gm: '0000',
+    gm: '2337',
   };
 
   const handleOpenPinModal = (char: CharacterData) => {
