@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CHARACTER_MAP } from '@/data/characters';
 import { CLUE_CARDS, calculateChaseDiceBonus } from '@/data/cards';
 import { ActionSkillActor, CharacterId, RoomState, SkillStatus } from '@/types/game';
@@ -11,7 +11,7 @@ import TabBooklet from '@/components/TabBooklet';
 import TabClueMap from '@/components/TabClueMap';
 import TabInventory from '@/components/TabInventory';
 import TabStoryEnding from '@/components/TabStoryEnding';
-import { BookOpen, Search, Briefcase, Film } from 'lucide-react';
+import { BookOpen, Search, Briefcase, Film, Bell, ArrowRight, X } from 'lucide-react';
 
 function createInitialLocalRoom(roomCode: string): RoomState {
   const cardOwners: Record<string, CharacterId | null> = {};
@@ -40,6 +40,16 @@ function createInitialLocalRoom(roomCode: string): RoomState {
 
 type ActiveTab = 'story' | 'booklet' | 'cluemap' | 'inventory';
 
+interface GateToast {
+  id: string;
+  badge: string;
+  title: string;
+  message: string;
+  targetTab: ActiveTab;
+  ctaLabel: string;
+  tone: 'amber' | 'rose' | 'emerald';
+}
+
 export default function HomePage() {
   const [roomCode, setRoomCode] = useState<string>('1889');
   const [selectedCharId, setSelectedCharId] = useState<CharacterId | null>(
@@ -47,6 +57,15 @@ export default function HomePage() {
   );
   const [isCharacterLocked, setIsCharacterLocked] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<ActiveTab>('story');
+  const [gateToast, setGateToast] = useState<GateToast | null>(null);
+  const prevSnapshotRef = useRef<{
+    charId: CharacterId | null;
+    g0: boolean;
+    g1: boolean;
+    g2: boolean;
+    g3: boolean;
+    bribed: CharacterId | null;
+  } | null>(null);
   const [room, setRoom] = useState<RoomState>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -135,6 +154,109 @@ export default function HomePage() {
       window.scrollTo(0, 0);
     }
   }, [activeTab, selectedCharId]);
+
+  // 관문 해금 / 사법거래 실시간 감지 시 토스트 배너 표시
+  useEffect(() => {
+    if (!selectedCharId) {
+      prevSnapshotRef.current = null;
+      setGateToast(null);
+      return;
+    }
+
+    const currentSnapshot = {
+      charId: selectedCharId,
+      g0: room.gate0Unlocked,
+      g1: room.gate1Unlocked,
+      g2: room.gate2Unlocked,
+      g3: room.gate3Unlocked,
+      bribed: room.bribedResident
+    };
+
+    const prev = prevSnapshotRef.current;
+    prevSnapshotRef.current = currentSnapshot;
+
+    // 캐릭터 입장 직후 첫 상태 기록 시에는 토스트 미표시
+    if (!prev || prev.charId !== selectedCharId) {
+      return;
+    }
+
+    let nextToast: GateToast | null = null;
+    if (!prev.g3 && room.gate3Unlocked) {
+      nextToast = {
+        id: `gate3-${Date.now()}`,
+        badge: '최종 결말 공개',
+        title: '최종 결말 & 진상 해설이 열렸습니다!',
+        message: '최종 점수 정산표와 캐릭터별 엔딩 대본을 확인하세요.',
+        targetTab: 'story',
+        ctaLabel: '결말 확인하기',
+        tone: 'emerald'
+      };
+    } else if (!prev.g2 && room.gate2Unlocked) {
+      nextToast = {
+        id: `gate2-${Date.now()}`,
+        badge: '최종 결판 오픈',
+        title: '최종 결판 단계가 해금되었습니다!',
+        message: '행동 스킬, 최종 투표 및 결판 판정을 진행하세요.',
+        targetTab: 'story',
+        ctaLabel: '결판 탭으로 이동',
+        tone: 'amber'
+      };
+    } else if (!prev.g1 && room.gate1Unlocked) {
+      nextToast = {
+        id: `gate1-${Date.now()}`,
+        badge: '긴급 상황 발생',
+        title: '새로운 국면이 열렸습니다!',
+        message: '긴급 속보 나레이션과 2차 단서 조사 구역을 확인하세요.',
+        targetTab: 'story',
+        ctaLabel: '긴급 속보 보기',
+        tone: 'rose'
+      };
+    } else if (!prev.g0 && room.gate0Unlocked) {
+      nextToast = {
+        id: `gate0-${Date.now()}`,
+        badge: '1차 조사 시작',
+        title: '단서 구역 조사가 해금되었습니다!',
+        message: '단서 구역 탭에서 실시간 조사 순번을 확인하세요.',
+        targetTab: 'cluemap',
+        ctaLabel: '단서 구역 이동',
+        tone: 'amber'
+      };
+    } else if (
+      prev.bribed !== room.bribedResident &&
+      room.bribedResident === selectedCharId
+    ) {
+      nextToast = {
+        id: `bribe-${Date.now()}`,
+        badge: '사법거래 성립',
+        title: '클라이브의 회유서가 반영되었습니다!',
+        message: '개인 설정집에서 변경된 5점 승리 목표를 확인하세요.',
+        targetTab: 'booklet',
+        ctaLabel: '내 설정집 보기',
+        tone: 'amber'
+      };
+    }
+
+    if (!nextToast) return;
+    // 마스터가 현재 보고 있는 탭에서 직접 해금한 경우 불필요한 중복 알림 생략
+    if (selectedCharId === 'gm' && activeTab === nextToast.targetTab) return;
+
+    setGateToast(nextToast);
+  }, [
+    selectedCharId,
+    room.gate0Unlocked,
+    room.gate1Unlocked,
+    room.gate2Unlocked,
+    room.gate3Unlocked,
+    room.bribedResident,
+    activeTab
+  ]);
+
+  // 토스트 자동 닫힘 (10초)
+  useEffect(() => {
+    if (!gateToast) return;
+    const timer = setTimeout(() => setGateToast(null), 10000);
+    return () => clearTimeout(timer);
+  }, [gateToast]);
 
   // Supabase 실시간 동기화 전송 헬퍼
   const syncToSupabase = useCallback(async (stateToSync: RoomState) => {
@@ -447,6 +569,72 @@ export default function HomePage() {
         onResetRoom={() => dispatchRoomAction('reset_room')}
         onUnlockGate={handleUnlockGate}
       />
+
+      {/* 관문 해금 / 이벤트 알림 토스트 배너 */}
+      {gateToast && (
+        <div className="fixed top-[66px] inset-x-0 z-40 px-3 pointer-events-none">
+          <div
+            className={`max-w-md mx-auto p-3.5 rounded-2xl border-2 shadow-2xl backdrop-blur-md pointer-events-auto flex items-start justify-between gap-2.5 transition-all ${
+              gateToast.tone === 'rose'
+                ? 'bg-rose-950/95 border-rose-500 text-rose-100'
+                : gateToast.tone === 'emerald'
+                ? 'bg-emerald-950/95 border-emerald-500 text-emerald-100'
+                : 'bg-amber-950/95 border-amber-500 text-amber-100'
+            }`}
+          >
+            <div className="flex items-start gap-2.5 min-w-0">
+              <div
+                className={`p-2 rounded-xl shrink-0 ${
+                  gateToast.tone === 'rose'
+                    ? 'bg-rose-900 text-rose-200'
+                    : gateToast.tone === 'emerald'
+                    ? 'bg-emerald-900 text-emerald-200'
+                    : 'bg-amber-900 text-amber-200'
+                }`}
+              >
+                <Bell className="w-4 h-4 animate-bounce" />
+              </div>
+              <div className="min-w-0 space-y-0.5">
+                <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-black/40 text-amber-200">
+                  {gateToast.badge}
+                </span>
+                <div className="text-xs font-extrabold leading-snug">
+                  {gateToast.title}
+                </div>
+                <p className="text-[11px] opacity-90 leading-snug">
+                  {gateToast.message}
+                </p>
+                {activeTab !== gateToast.targetTab && (
+                  <button
+                    onClick={() => {
+                      setActiveTab(gateToast.targetTab);
+                      setGateToast(null);
+                    }}
+                    className={`mt-2 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-extrabold shadow transition ${
+                      gateToast.tone === 'rose'
+                        ? 'bg-rose-500 hover:bg-rose-400 text-stone-950'
+                        : gateToast.tone === 'emerald'
+                        ? 'bg-emerald-500 hover:bg-emerald-400 text-stone-950'
+                        : 'bg-amber-500 hover:bg-amber-400 text-stone-950'
+                    }`}
+                  >
+                    <span>{gateToast.ctaLabel}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setGateToast(null)}
+              className="p-1 rounded-lg hover:bg-black/30 text-stone-300 shrink-0 transition"
+              aria-label="알림 닫기"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 중앙 탭 콘텐츠 영역 */}
       <main className="flex-1 max-w-md w-full mx-auto px-3.5 pt-4 pb-24">
