@@ -261,13 +261,16 @@ export default function HomePage() {
   // Supabase 실시간 동기화 전송 헬퍼
   const syncToSupabase = useCallback(async (stateToSync: RoomState) => {
     try {
-      await supabase.from('rooms').upsert({
+      const { error } = await supabase.from('rooms').upsert({
         room_code: stateToSync.roomCode,
         state: stateToSync,
         updated_at: new Date().toISOString()
       });
-    } catch {
-      // Supabase 테이블이 아직 없거나 네트워크 단절 시 조용히 무시 (로컬 & API 폴백 자동 작동)
+      if (error) {
+        console.error('[Supabase upsert error]', error.message);
+      }
+    } catch (err) {
+      console.error('[Supabase sync exception]', err);
     }
   }, []);
 
