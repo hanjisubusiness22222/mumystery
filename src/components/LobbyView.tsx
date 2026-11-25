@@ -147,13 +147,10 @@ export default function LobbyView({
 
         {/* 캐릭터 선택 리스트 */}
         <div className="space-y-2.5">
-          <div className="flex items-center justify-between px-1">
+          <div className="flex items-center px-1">
             <h2 className="text-sm font-bold text-amber-200 flex items-center gap-1.5">
               <Shield className="w-4 h-4 text-amber-400" /> 당신이 맡은 캐릭터를 선택하세요
             </h2>
-            <span className="text-[11px] text-stone-400">
-              스포일러 주의 (본인 역할만 열람)
-            </span>
           </div>
 
           <div className="grid grid-cols-1 gap-2.5">
