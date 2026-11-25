@@ -128,7 +128,7 @@ export const CHARACTERS: CharacterData[] = [
   {
     id: 'clive',
     initial: 'C',
-    name: '클라이브 (Clive)',
+    name: '보안관 클라이브 (Clive)',
     roleTitle: '외지인 보안관',
     emoji: '⭐',
     avatarUrl: '/avatars/clive.jpg',
@@ -266,7 +266,7 @@ export const CHARACTERS: CharacterData[] = [
   {
     id: 'ernest',
     initial: 'E',
-    name: '어니스트 (Ernest)',
+    name: '시장 어니스트 (Ernest)',
     roleTitle: '마을 시장',
     emoji: '🏛️',
     avatarUrl: '/avatars/ernest.jpg',
@@ -327,7 +327,7 @@ export const CHARACTERS: CharacterData[] = [
   {
     id: 'florence',
     initial: 'F',
-    name: '플로렌스 (Dr. Florence)',
+    name: '닥터 플로렌스 (Florence)',
     roleTitle: '진료소 의사',
     emoji: '💉',
     avatarUrl: '/avatars/florence.jpg',
@@ -390,7 +390,7 @@ export const CHARACTERS: CharacterData[] = [
   {
     id: 'grace',
     initial: 'G',
-    name: '그레이스 (Sister Grace)',
+    name: '수녀 그레이스 (Grace)',
     roleTitle: '성당 수녀',
     emoji: '⛪',
     avatarUrl: '/avatars/grace.jpg',

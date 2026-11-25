@@ -162,12 +162,9 @@ export default function LobbyView({
               >
                 <CharacterAvatar character={char} size="lg" />
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
                     <span className="font-bold text-amber-100 text-sm">
                       [{char.initial}] {char.name}
-                    </span>
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-stone-950/70 text-amber-300 border border-amber-700/40 shrink-0">
-                      {char.roleTitle}
                     </span>
                   </div>
                   <p className="text-xs text-stone-300 mt-1 line-clamp-2 leading-relaxed">
