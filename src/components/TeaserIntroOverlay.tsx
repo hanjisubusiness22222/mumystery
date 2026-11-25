@@ -82,13 +82,6 @@ export default function TeaserIntroOverlay({
           </button>
         )}
       </div>
-
-      {/* 하단 안내 */}
-      <p className="mt-3 text-[11px] sm:text-xs text-stone-400 text-center">
-        {canSkip
-          ? '우측 상단 [건너뛰기]를 누르거나 영상이 끝나면 캐릭터 선택 화면으로 이동합니다.'
-          : '첫 방문 티저 영상 재생 중입니다. 영상이 끝나면 자동으로 입장합니다.'}
-      </p>
     </div>
   );
 }
