@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CHARACTERS, GM_CHARACTER } from '@/data/characters';
 import { CharacterData, CharacterId } from '@/types/game';
 import CharacterAvatar from '@/components/CharacterAvatar';
-import { Shield, Users, Sparkles, Lock } from 'lucide-react';
+import TeaserIntroOverlay from '@/components/TeaserIntroOverlay';
+import { Shield, Users, Sparkles, Lock, Film } from 'lucide-react';
 
 interface LobbyViewProps {
   roomCode: string;
@@ -21,6 +22,29 @@ export default function LobbyView({
   const [confirmChar, setConfirmChar] = useState<CharacterData | null>(null);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState('');
+  const [showTeaser, setShowTeaser] = useState(false);
+  const [canSkipTeaser, setCanSkipTeaser] = useState(false);
+
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem('nf_teaser_seen') === '1';
+      setCanSkipTeaser(seen);
+      setShowTeaser(true);
+    } catch {
+      setCanSkipTeaser(false);
+      setShowTeaser(true);
+    }
+  }, []);
+
+  const handleFinishTeaser = () => {
+    try {
+      localStorage.setItem('nf_teaser_seen', '1');
+    } catch {
+      // ignore storage errors
+    }
+    setCanSkipTeaser(true);
+    setShowTeaser(false);
+  };
 
   // 캐릭터별 전용 비밀번호 매핑 (A, B, C, D, E, F, G: 111~117 / GM: 2337)
   const CHARACTER_PINS: Record<CharacterId, string> = {
@@ -55,6 +79,12 @@ export default function LobbyView({
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col justify-between p-4 pb-10">
+      {showTeaser && (
+        <TeaserIntroOverlay
+          canSkip={canSkipTeaser}
+          onFinish={handleFinishTeaser}
+        />
+      )}
       <div className="max-w-md mx-auto w-full space-y-6 pt-4">
         {/* 타이틀 & 공식 티저 포스터 배너 */}
         <div className="relative overflow-hidden rounded-2xl border border-amber-700/60 shadow-2xl bg-stone-950">
@@ -65,6 +95,15 @@ export default function LobbyView({
               className="w-full h-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/45 to-transparent" />
+            <button
+              onClick={() => {
+                setCanSkipTeaser(true);
+                setShowTeaser(true);
+              }}
+              className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-950/80 hover:bg-amber-600 text-amber-200 hover:text-stone-950 border border-amber-500/60 text-[11px] font-bold backdrop-blur transition shadow"
+            >
+              <Film className="w-3 h-3" /> 티저 다시보기
+            </button>
           </div>
           <div className="relative -mt-16 p-5 text-center space-y-1.5">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/90 border border-amber-600/60 text-amber-300 text-xs font-semibold shadow">
